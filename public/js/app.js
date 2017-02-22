@@ -81,19 +81,19 @@ hangmanApp.controller('hangmanController', function hangmanController($scope) {
     function winner() {
         alert("Winner");
     }
-
-
-    function test() {
-        var a = 123;
-        var b ="123";
-        if (b == a) {
-            alert(true);
-        }
-        else {
-            alert(false);
-        }
-    }
-    test();
+    //
+    //
+    // function test() {
+    //     var a = 123;
+    //     var b ="123";
+    //     if (b == a) {
+    //         alert(true);
+    //     }
+    //     else {
+    //         alert(false);
+    //     }
+    // }
+    // test();
 
     draw = function($pathFromx, $pathFromy, $pathTox, $pathToy) {
         myStickman = document.getElementById("myCanvas");
