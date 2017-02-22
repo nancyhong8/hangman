@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="hangmanApp">
+<head>
+    <link href="css/style.css" rel="stylesheet"/>
+
+
+    <script src="../js/angular.js"></script>
+    <script src="../js/angular-route.js"></script>
+    <script src="js/app.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <title>Hangman Page</title>
+</head>
+
+<body ng-controller="hangmanController" ng-app="hangmanApp">
+
+<!-- Header -->
+<div class="sticky-header">
+    <div class="container-fluid">
+        <h2 class="white-color">
+            <div class="right-side-glyphicon">
+                <a ng-click="instructions()">
+                    <span title="Instructions" class="glyphicon glyphicon-info-sign"></span>
+                </a>
+                <a ng-click="model.init()">
+                    <span title="Restart" class="glyphicon glyphicon-repeat"></span>
+                </a>
+            </div>
+            Nancy's Hangman
+        </h2>
+    </div>
+</div>
+<!-- HEADER END -->
+
+
+
+
+
+<!-- WORD -->
+<div class="col-xs-8">
+
+    <!-- instructions -->
+    <div id="instructions" style="display:none;" class="instructions">
+        These are the instructions:
+        blalslkjfalsdf
+        asdfkjasdflajsdf
+    </div>
+
+
+    <div class="container-fluid">
+
+        <!-- alphabet -->
+        <div class="alphabetBox">
+            <ul>
+                <li class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index)">{{x}}</li>
+            </ul>
+        </div>
+
+
+        <!-- wording -->
+        <div class="centered">
+                <div class="spaces" ng-repeat="y in space track by $index">{{y}}</div>
+        </div>
+
+    </div>
+</div>
+<!-- WORD ENDING -->
+
+<!-- HANING MAN -->
+<div class="col-xs-4">
+    <div class="container-fluid">
+        <div class="wrongGuesses">
+            Wrong Guesses: {{wrongGuesses}} out of 10
+        </div>
+
+        <div class="center">
+            <canvas id="myCanvas" width="200" height="180" style="border:1px solid #d3d3d3;">
+            </canvas>
+        </div>
+
+
+
+
+
+
+    </div>
+</div>
+<!-- HANGING MAN END -->
+
+
+
+
+<!-- FOOTER -->
+<div class="sticky-footer">
+    <div class="container-fluid">
+        <h2><div class="right-side-glyphicon">
+            <a ng-click="model.profile()">
+                <span class="glyphicon glyphicon-user"></span>
+            </a>
+        </div></h2>
+    </div>
+</div>
+<!-- FOOTER END -->
+
+</body>
+</html>
