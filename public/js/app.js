@@ -6,7 +6,7 @@
 var hangmanApp = angular.module('hangmanApp', []);
 
 
-hangmanApp.controller('hangmanController', function hangmanController($scope) {
+hangmanApp.controller('hangmanController', function hangmanController($scope, $modal) {
 
     var word = "hangman";
     var correctLetter = [];
@@ -16,7 +16,21 @@ hangmanApp.controller('hangmanController', function hangmanController($scope) {
     var space = [];
     var wrongGuesses = 0;
     $scope.wrongGuesses = wrongGuesses;
+    $scope.removeInstructions = removeInstructions;
+    $scope.instructionVisible = true;
+    $scope.instructionVisibility = function() {
+        if ($scope.instructionVisible) {
+            $scope.instructionVisible = false;
+        }
+        else {
+            $scope.instructionVisible = true;
+        }
+    }
 
+
+    function removeInstructions() {
+        elt.html('');
+    }
 
 
     // Handles the spaces for the letters of the word
@@ -36,14 +50,14 @@ hangmanApp.controller('hangmanController', function hangmanController($scope) {
 
 
     // Make the instructions visible/invisible based on button click
-    $scope.instructions = function () {
-        var visibility = document.getElementById('instructions')
-        if(visibility.style.display == "none") {
-            visibility.style.display = "block";
-        } else {
-            visibility.style.display = "none";
-        }
-    }
+    // $scope.instructions = function () {
+    //     var visibility = document.getElementById('instructions')
+    //     if(visibility.style.display == "none") {
+    //         visibility.style.display = "block";
+    //     } else {
+    //         visibility.style.display = "none";
+    //     }
+    // }
 
     var alphabet = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
@@ -54,46 +68,57 @@ hangmanApp.controller('hangmanController', function hangmanController($scope) {
 
     // Handling the clicked letter
     $scope.letterClicked = function (index) {
+        $scope.letterClickedIndex = index;
         var letter = alphabet[index];
         for(var i = 0; i < word.length; i++) {
             if(word[i] === letter) {
                 space[i] = letter;
             }
             if(!space.includes("_")) {
-                winner();
+                // winner();
             }
         }
         if(!word.includes(letter)) {
             wrongGuesses += 1;
+            wrongLetter.push(letter);
+
             if(wrongGuesses < 10) {
                 drawArray[wrongGuesses]();
             }
-            else {
+            if (wrongGuesses === 9) {
                 loser();
             }
+
         }
+
+        $scope.wrongLetter = wrongLetter;
         $scope.wrongGuesses = wrongGuesses;
     }
 
+    $scope.arrayToString = function(string){
+        if (string != null) {
+            return string.join(", ");
+        }
+
+    };
+
     function loser() {
-        alert("Loser!");
+        $modal.open({
+            template: "LOST!"
+        })
+        document.location.reload();
     }
-    function winner() {
-        alert("Winner");
-    }
-    //
-    //
-    // function test() {
-    //     var a = 123;
-    //     var b ="123";
-    //     if (b == a) {
-    //         alert(true);
-    //     }
-    //     else {
-    //         alert(false);
-    //     }
+    // function winner() {
+    //     alert("Winner");
     // }
-    // test();
+
+
+
+
+
+
+
+
 
     draw = function($pathFromx, $pathFromy, $pathTox, $pathToy) {
         myStickman = document.getElementById("myCanvas");

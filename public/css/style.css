@@ -2,6 +2,11 @@ input.form-control {
     margin-bottom: 5px;
 }
 
+* {
+    font-size: 100%;
+    font-family: Arial;
+}
+
 body {
     padding-top: 80px;
     padding-bottom: 80px;
@@ -71,15 +76,16 @@ table {
 }
 
 
-.instructions {
+#instructions {
     width: 350px;
-    height: 100px;
+    height: 400px;
     position: absolute;
     top: 50px;
     left: 50px;
     padding: 10px;
-    background-color: blue;
+    background-color: #1b6d85;
     color: white;
+    border-radius:10px;
 }
 .alphabetBox {
     margin:15px auto;
@@ -128,6 +134,14 @@ table {
 .wrongGuesses {
     margin-top: 30px;
     font-size: large;
+}
+
+.active {
+    background-color: transparent;
+}
+
+.btn {
+    float: right;
 }
     /*color:$base-color;*/
 
