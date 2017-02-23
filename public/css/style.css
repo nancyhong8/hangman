@@ -87,10 +87,12 @@ table {
     background-color: #1b6d85;
     color: white;
     border-radius:10px;
+    z-index: 2;
 }
 
 .instructionBox {
     margin-left: 500px;
+
 }
 .alphabet {
     float:left;
@@ -142,6 +144,17 @@ table {
 
 .btn {
     float: right;
+}
+
+.winLose {
+    width: 500px;
+    height: 150px;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    padding: 10px;
+    background-color: #d0e9c6;
+    border-radius:10px;
 }
     /*color:$base-color;*/
 

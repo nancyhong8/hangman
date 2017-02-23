@@ -25,12 +25,15 @@
     <div class="container-fluid">
         <h2 class="white-color">
             <div class="right-side-glyphicon">
+
                 <a ng-click="instructionVisibility()">
                     <span title="Instructions" class="glyphicon glyphicon-info-sign"></span>
                 </a>
                 <a ng-click="init()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
+
+
             </div>
             Nancy's Hangman
         </h2>
@@ -44,12 +47,6 @@
 
 
 <div>
-
-
-
-<!-- WORD -->
-<div class="col-xs-8">
-
     <div id="instructions" draggables="" ng-show="instructionVisible">
         <h2>Welcome to Nancy's Hangman</h2>
         <ul>
@@ -62,6 +59,12 @@
     </div>
 
 
+
+<!-- WORD -->
+<div class="col-xs-8">
+
+
+
     <div>
         <!-- alphabet -->
         <div class="container-fluid">
@@ -71,6 +74,9 @@
                 </li>
             </ul>
         </div>
+
+
+
 
 
         <!-- wording -->
@@ -95,7 +101,6 @@
             </canvas>
         </div>
 
-
     </div>
 </div>
 <!-- HANGING MAN END -->
@@ -104,13 +109,25 @@
 
 
 <!-- FOOTER -->
+<!--<div class="sticky-footer">-->
+    <!--<div class="container-fluid">-->
+        <!--<h2>-->
+            <!--<div class="right-side-glyphicon">-->
+            <!--<a>-->
+                <!--<span class="glyphicon glyphicon-user" class="dropbtn"></span>-->
+            <!--</a>-->
+            <!--</div>-->
+        <!--</h2>-->
+    <!--</div>-->
+<!--</div>-->
+
 <div class="sticky-footer">
     <div class="container-fluid">
-        <h2><div class="right-side-glyphicon">
-            <a ng-click="profile()">
-                <span class="glyphicon glyphicon-user"></span>
-            </a>
-        </div></h2>
+        <h2>
+            <div>
+
+            </div>
+        </h2>
     </div>
 </div>
 <!-- FOOTER END -->
