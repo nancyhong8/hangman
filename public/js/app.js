@@ -18,16 +18,63 @@ hangmanApp.directive('draggables', function dragInstructions() {
 hangmanApp.controller('hangmanController', function hangmanController($scope, $modal) {
 
 
-    $scope.init = function init() {
+    $scope.init = init;
+
+        function init() {
         document.location.reload();
     }
 
-    var word = "hangman";
+
     var wrongLetter = [];
     var space = [];
     var wrongGuesses = 0;
+    var words = [];
 
-    $scope.word = word;
+    // $(document).ready(function() {
+    //     $.get('words.txt', function(data) {
+    //         var lines = data.split('\n');
+    //
+    //         for(var i=0; i<lines.length; i++) {
+    //             words.push(lines[i]);
+    //         }
+    //         var index = Math.floor(Math.random() * lines.length);
+    //         console.log(index);
+    //         $scope.word = words[index];
+    //         if($scope.word.length < 4) {
+    //             console.log("reached too short");
+    //             init();
+    //         }
+    //         console.log($scope.word)
+    //     })
+    // })
+
+    function start() {
+        $.get('words.txt', function(data) {
+            var lines = data.split('\n');
+
+            for(var i=0; i<lines.length; i++) {
+                words.push(lines[i]);
+            }
+            var index = Math.floor(Math.random() * lines.length);
+            console.log(index);
+            var word = words[index];
+            if(word.length < 4) {
+                console.log("reached too short");
+                init();
+            }
+            spaceRender(word);
+            console.log(word);
+            $scope.word = word;
+
+        })
+
+
+    }
+    start();
+
+
+
+
     $scope.wrongGuesses = wrongGuesses;
     $scope.instructionVisible = true;
 
@@ -50,8 +97,8 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
 
     // Handles the spaces for the letters of the word
-    function spaceRender() {
-        for (i = 0; i < word.length; i++) {
+    function spaceRender(word) {
+        for (i = 0; i < word.length - 1; i++) {
             if (word[i] === "-") {
                 space.push("-");
             }
@@ -61,23 +108,21 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         }
         $scope.space = space;
     }
-    spaceRender();
-
 
 
     // Handling the clicked letter
     $scope.letterClicked = function (index, event) {
         $scope.letterClickedIndex = index;
         var letter = alphabet[index];
-        for(var i = 0; i < word.length; i++) {
-            if(word[i] === letter) {
+        for(var i = 0; i < $scope.word.length; i++) {
+            if($scope.word[i] === letter) {
                 space[i] = letter;
             }
             if(!space.includes("_")) {
                  openWon();
             }
         }
-        if(!word.includes(letter)) {
+        if(!$scope.word.includes(letter)) {
             wrongGuesses += 1;
             wrongLetter.push(letter);
             if(wrongGuesses < 10) {
