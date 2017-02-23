@@ -77,8 +77,9 @@ table {
 
 
 #instructions {
-    width: 350px;
-    height: 400px;
+    margin-left: 25%;
+    width: 500px;
+    height: 300px;
     position: absolute;
     top: 50px;
     left: 50px;
@@ -87,10 +88,9 @@ table {
     color: white;
     border-radius:10px;
 }
-.alphabetBox {
-    margin:15px auto;
-    padding: 10px;
-    max-width:900px;
+
+.instructionBox {
+    margin-left: 500px;
 }
 .alphabet {
     float:left;

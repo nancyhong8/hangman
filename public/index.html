@@ -2,21 +2,21 @@
 <html lang="en" ng-app="hangmanApp">
 <head>
     <link href="css/style.css" rel="stylesheet"/>
-
     <script src="js/jquery-3.1.1.min.js"></script>
     <script
             src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
             integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
     <script src="js/angular.js"></script>
     <script src="js/angular-route.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.12.0.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
     <meta charset="UTF-8">
     <title>Hangman Page</title>
 </head>
+
 
 <body ng-controller="hangmanController" ng-app="hangmanApp">
 
@@ -28,7 +28,7 @@
                 <a ng-click="instructionVisibility()">
                     <span title="Instructions" class="glyphicon glyphicon-info-sign"></span>
                 </a>
-                <a ng-click="model.init()">
+                <a ng-click="init()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
             </div>
@@ -42,16 +42,15 @@
 
 
 
+
+<div>
+
+
+
 <!-- WORD -->
 <div class="col-xs-8">
 
-    <!-- instructions -->
-    <script>
-        $( function() {
-            $( "#instructions" ).draggable();
-        } );
-    </script>
-    <div id="instructions" ng-show="instructionVisible">
+    <div id="instructions" draggables="" ng-show="instructionVisible">
         <h2>Welcome to Nancy's Hangman</h2>
         <ul>
             <li>Select letters by clicking the letter buttons</li>
@@ -64,11 +63,12 @@
 
 
     <div>
-
         <!-- alphabet -->
-        <div class="alphabetBox" class="container-fluid">
+        <div class="container-fluid">
             <ul>
-                <li ng-class="{'active':$index == letterClickedIndex}" class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index)">{{x}}</li>
+                <li ng-class="{'active':$index == letterClickedIndex}" class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index, $event)">
+                    {{x}}
+                </li>
             </ul>
         </div>
 
@@ -82,7 +82,7 @@
 </div>
 <!-- WORD ENDING -->
 
-<!-- HANING MAN -->
+<!-- HANGING MAN -->
 <div class="col-xs-4">
     <div class="container-fluid">
         <div class="wrongGuesses" >
@@ -90,29 +90,24 @@
             <br/>Wrong Letters: {{arrayToString(wrongLetter)}}
         </div>
 
-
         <div class="center">
             <canvas id="myCanvas" width="200" height="180" style="border:1px solid #d3d3d3;">
             </canvas>
         </div>
 
 
-
-
-
-
     </div>
 </div>
 <!-- HANGING MAN END -->
 
-
+</div>
 
 
 <!-- FOOTER -->
 <div class="sticky-footer">
     <div class="container-fluid">
         <h2><div class="right-side-glyphicon">
-            <a ng-click="model.profile()">
+            <a ng-click="profile()">
                 <span class="glyphicon glyphicon-user"></span>
             </a>
         </div></h2>

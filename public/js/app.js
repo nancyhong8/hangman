@@ -1,23 +1,44 @@
-// (function () {
-//     angular
-//         .module("hangmanApp", []);
-// })();
 
-var hangmanApp = angular.module('hangmanApp', []);
+var hangmanApp = angular.module('hangmanApp', ['ui.bootstrap']);
+
+
+
+hangmanApp.directive('draggables', function dragInstructions() {
+        function linkFunc(scope, element, attributes) {
+            element.draggable();
+        }
+        return {
+            link: linkFunc
+        }
+    }
+)
+
 
 
 hangmanApp.controller('hangmanController', function hangmanController($scope, $modal) {
 
+
+    $scope.init = function init() {
+        document.location.reload();
+    }
+
     var word = "hangman";
-    var correctLetter = [];
     var wrongLetter = [];
-    $scope.correctLetter = correctLetter;
-    $scope.word = word;
     var space = [];
     var wrongGuesses = 0;
+
+    $scope.word = word;
     $scope.wrongGuesses = wrongGuesses;
-    $scope.removeInstructions = removeInstructions;
     $scope.instructionVisible = true;
+
+
+    var alphabet = [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+    ]
+    $scope.alphabet = alphabet;
+
+
     $scope.instructionVisibility = function() {
         if ($scope.instructionVisible) {
             $scope.instructionVisible = false;
@@ -25,11 +46,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         else {
             $scope.instructionVisible = true;
         }
-    }
-
-
-    function removeInstructions() {
-        elt.html('');
     }
 
 
@@ -44,30 +60,13 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
             }
         }
         $scope.space = space;
-
     }
     spaceRender();
 
 
-    // Make the instructions visible/invisible based on button click
-    // $scope.instructions = function () {
-    //     var visibility = document.getElementById('instructions')
-    //     if(visibility.style.display == "none") {
-    //         visibility.style.display = "block";
-    //     } else {
-    //         visibility.style.display = "none";
-    //     }
-    // }
-
-    var alphabet = [
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    ]
-    $scope.alphabet = alphabet;
-
 
     // Handling the clicked letter
-    $scope.letterClicked = function (index) {
+    $scope.letterClicked = function (index, event) {
         $scope.letterClickedIndex = index;
         var letter = alphabet[index];
         for(var i = 0; i < word.length; i++) {
@@ -75,46 +74,43 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
                 space[i] = letter;
             }
             if(!space.includes("_")) {
-                // winner();
+                 openWon();
             }
         }
         if(!word.includes(letter)) {
             wrongGuesses += 1;
             wrongLetter.push(letter);
-
             if(wrongGuesses < 10) {
                 drawArray[wrongGuesses]();
             }
             if (wrongGuesses === 9) {
-                loser();
+                openLost();
             }
 
         }
-
         $scope.wrongLetter = wrongLetter;
         $scope.wrongGuesses = wrongGuesses;
+    }
+
+
+    function openLost() {
+        var modalInstance = $modal.open({
+            templateUrl: "templates/loser.html",
+            controller: "hangmanController"
+        })
+    }
+    function openWon() {
+        var modalInstance = $modal.open({
+            templateUrl: "templates/winner.html",
+            controller: "hangmanController"
+        })
     }
 
     $scope.arrayToString = function(string){
         if (string != null) {
             return string.join(", ");
         }
-
     };
-
-    function loser() {
-        $modal.open({
-            template: "LOST!"
-        })
-        document.location.reload();
-    }
-    // function winner() {
-    //     alert("Winner");
-    // }
-
-
-
-
 
 
 
@@ -128,14 +124,14 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         context.stroke();
     }
 
-    canvas =  function(){
-        console.log("reached");
-        myStickman = document.getElementById("stickman");
-        context = myStickman.getContext('2d');
-        context.beginPath();
-        context.strokeStyle = "#fff";
-        context.lineWidth = 2;
-    };
+    // canvas =  function(){
+    //     console.log("reached");
+    //     myStickman = document.getElementById("stickman");
+    //     context = myStickman.getContext('2d');
+    //     context.beginPath();
+    //     context.strokeStyle = "#fff";
+    //     context.lineWidth = 2;
+    // };
     // canvas();
 
     head = function(){
@@ -181,8 +177,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
     leftLeg = function() {
         draw (60, 70, 20, 100);
     };
-
-
 
     drawArray = [frame1, frame2, frame3, frame4, head, torso, leftArm, rightArm, leftLeg, rightLeg]
 
