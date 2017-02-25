@@ -14,52 +14,6 @@ hangmanApp.directive('draggables', function dragInstructions() {
 )
 
 
-// // CONFIGURATION
-// hangmanApp.config(function($httpProvider) {
-//     $httpProvider.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-//     $httpProvider.defaults.headers.put['Content-Type'] = 'application/json;charset=utf-8';
-// })
-
-// // Service
-// hangmanApp.factory('hangmanService', function($http) {
-//
-//     var word, words;
-//
-//     var api = {
-//         "word": word,
-//         "selectWord": selectWord,
-//         "renderBlankWord": renderBlankWord
-//     };
-//     return api;
-//
-//     function selectWord() {
-//         $.get('words.txt', function (data) {
-//             var lines = data.split('\n');
-//
-//             for (var i = 0; i < lines.length; i++) {
-//                 words.push(lines[i]);
-//             }
-//             var index = Math.floor(Math.random() * lines.length);
-//             console.log(index);
-//             var word = words[index];
-//             if (word.length < 4) {
-//                 console.log("reached too short");
-//                 init();
-//             }
-//             // spaceRender(word);
-//             console.log(word);
-//             word = word;
-//         })
-//     }
-//
-//     function renderBlankWord() {
-//         return $http.post()
-//     }
-//
-// })
-
-
-
 
 
 // CONTROLLER
@@ -72,12 +26,18 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
             controller: "hangmanController"
         })
     }
+
     function selectWord() {
         $http({
             method: 'GET',
             url: '/api/word'
         }).then(function(word) {
             console.log(word.data);
+            if (word.data.length < 4) {
+                console.log("short word");
+                selectWord();
+                return;
+            }
             spaceRender(word.data);
         }),function(error) {
             alert("error!");
