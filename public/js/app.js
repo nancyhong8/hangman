@@ -2,7 +2,7 @@
 var hangmanApp = angular.module('hangmanApp', ['ui.bootstrap']);
 
 
-
+// DIRECTIVE
 hangmanApp.directive('draggables', function dragInstructions() {
         function linkFunc(scope, element, attributes) {
             element.draggable();
@@ -14,9 +14,70 @@ hangmanApp.directive('draggables', function dragInstructions() {
 )
 
 
+// // CONFIGURATION
+// hangmanApp.config(function($httpProvider) {
+//     $httpProvider.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+//     $httpProvider.defaults.headers.put['Content-Type'] = 'application/json;charset=utf-8';
+// })
 
-hangmanApp.controller('hangmanController', function hangmanController($scope, $modal) {
+// // Service
+// hangmanApp.factory('hangmanService', function($http) {
+//
+//     var word, words;
+//
+//     var api = {
+//         "word": word,
+//         "selectWord": selectWord,
+//         "renderBlankWord": renderBlankWord
+//     };
+//     return api;
+//
+//     function selectWord() {
+//         $.get('words.txt', function (data) {
+//             var lines = data.split('\n');
+//
+//             for (var i = 0; i < lines.length; i++) {
+//                 words.push(lines[i]);
+//             }
+//             var index = Math.floor(Math.random() * lines.length);
+//             console.log(index);
+//             var word = words[index];
+//             if (word.length < 4) {
+//                 console.log("reached too short");
+//                 init();
+//             }
+//             // spaceRender(word);
+//             console.log(word);
+//             word = word;
+//         })
+//     }
+//
+//     function renderBlankWord() {
+//         return $http.post()
+//     }
+//
+// })
 
+
+
+
+
+// CONTROLLER
+hangmanApp.controller('hangmanController', function hangmanController($scope, $modal, $http) {
+
+
+    function selectWord() {
+        return $http.get("/api/word")
+            .success(function(word) {
+                var word = word;
+                spaceRender(word);
+            })
+            .error(function() {
+                alert("couldn't fetch word!");
+            })
+    }
+
+    selectWord();
 
 
     function init() {
@@ -24,26 +85,8 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
     }
     $scope.init = init;
 
-    /* When the user clicks on the button,
-     toggle between hiding and showing the dropdown content */
-    function myFunction() {
-        document.getElementById("myDropdown").classList.toggle("show");
-    }
 
-// Close the dropdown menu if the user clicks outside of it
-    window.onclick = function(event) {
-        if (!event.target.matches('.dropbtn')) {
 
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            var i;
-            for (i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
-                }
-            }
-        }
-    }
 
     var wrongLetter = [];
     var space = [];
@@ -68,26 +111,8 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
     //     })
     // })
 
+    // parses the words.txt and gets a word
     function start() {
-        $.get('words.txt', function(data) {
-            var lines = data.split('\n');
-
-            for(var i=0; i<lines.length; i++) {
-                words.push(lines[i]);
-            }
-            var index = Math.floor(Math.random() * lines.length);
-            console.log(index);
-            var word = words[index];
-            if(word.length < 4) {
-                console.log("reached too short");
-                init();
-            }
-            spaceRender(word);
-            console.log(word);
-            $scope.word = word;
-
-        })
-
 
     }
     start();
