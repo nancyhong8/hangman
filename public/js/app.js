@@ -66,15 +66,72 @@ hangmanApp.directive('draggables', function dragInstructions() {
 hangmanApp.controller('hangmanController', function hangmanController($scope, $modal, $http) {
 
 
+    function playAnother() {
+        var modalInstance = $modal.close({
+            templateUrl: "templates/loser.html",
+            controller: "hangmanController"
+        })
+    }
     function selectWord() {
-        return $http.get("/api/word")
-            .success(function(word) {
-                var word = word;
-                spaceRender(word);
-            })
-            .error(function() {
-                alert("couldn't fetch word!");
-            })
+        $http({
+            method: 'GET',
+            url: '/api/word'
+        }).then(function(word) {
+            console.log(word.data);
+            spaceRender(word.data);
+        }),function(error) {
+            alert("error!");
+        }
+    }
+    $scope.selectWord = selectWord;
+
+    $scope.loses = getLoses;
+    function getLoses() {
+        $http({
+            method: 'GET',
+            url: '/api/getLoses'
+        }).then(function(loses) {
+            $scope.loses = loses.data;
+        }),function(error) {
+            alert("error!");
+        }
+    }
+    getLoses();
+
+    $scope.wins = getWins;
+    function getWins() {
+        $http({
+            method: 'GET',
+            url: '/api/getWins'
+        }).then(function(wins) {
+            $scope.wins = wins.data;
+        }),function(error) {
+            alert("error!");
+        }
+    }
+    getWins();
+
+    function addWins() {
+        $http({
+            method: 'GET',
+            url: '/api/addWin'
+        }).then(function(wins) {
+            $scope.wins = wins.data;
+        }),function(error) {
+            alert("error!");
+        }
+    }
+
+    function addLoses() {
+        $http({
+            method: 'GET',
+            url: '/api/addLose'
+        }).then(function(loses) {
+            $scope.loses = loses.data;
+        }),function(error) {
+            alert("error!");
+        }
+
     }
 
     selectWord();
@@ -143,7 +200,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
     // Handles the spaces for the letters of the word
     function spaceRender(word) {
-        for (i = 0; i < word.length - 1; i++) {
+        for (i = 0; i < word.length; i++) {
             if (word[i] === "-") {
                 space.push("-");
             }
@@ -152,7 +209,9 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
             }
         }
         $scope.space = space;
+        $scope.word = word;
     }
+
 
 
     // Handling the clicked letter
@@ -160,20 +219,23 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         $scope.letterClickedIndex = index;
         var letter = alphabet[index];
         for(var i = 0; i < $scope.word.length; i++) {
-            if($scope.word[i] === letter) {
+            if($scope.word[i] == letter) {
                 space[i] = letter;
             }
-            if(!space.includes("_")) {
-                 openWon();
-            }
+
+        }
+        if(!space.includes("_")) {
+            addWins();
+            openWon();
         }
         if(!$scope.word.includes(letter)) {
             wrongGuesses += 1;
             wrongLetter.push(letter);
-            if(wrongGuesses < 10) {
+            if(wrongGuesses < 11) {
                 drawArray[wrongGuesses]();
             }
-            if (wrongGuesses === 9) {
+            if (wrongGuesses == 10) {
+                addLoses();
                 openLost();
             }
 
@@ -233,6 +295,9 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         context.arc(60, 25, 10, 0, Math.PI*2, true);
         context.stroke();
     }
+    frame0 = function() {
+        draw (20, 0, 150, 0);
+    }
 
     frame1 = function() {
         draw (0, 150, 150, 150);
@@ -269,7 +334,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         draw (60, 70, 20, 100);
     };
 
-    drawArray = [frame1, frame2, frame3, frame4, head, torso, leftArm, rightArm, leftLeg, rightLeg]
+    drawArray = [frame0, frame1, frame2, frame3, frame4, head, torso, leftArm, rightArm, leftLeg, rightLeg]
 
 
 
