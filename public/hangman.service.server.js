@@ -9,6 +9,35 @@ module.exports = function (app) {
 
 
     function selectWord(req, res) {
+        var words = [];
+        var word;
+        fs = require('fs');
+        fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
+            if(err) {
+                console.log("couldnt open word file: " + err);
+            }
+            else {
+                var lines = data.split('\n');
+                for (var i = 0; i < lines.length; i++) {
+                    words.push(lines[i]);
+                }
+                var index = Math.floor(Math.random() * lines.length);
+                word = words[index];
+                console.log(word);
+                res.send(word.replace(/\r?\n|\r/,''));
+
+            }
+
+
+            // if (word.length < 4) {
+            //     console.log("reached too short");
+            //     init();
+            // }
+            // spaceRender(word);
+
+        })
+        console.log("word: " + word);
+
         // $.get('words.txt', function (data) {
         //     var word;
         //     var lines = data.split('\n');
@@ -34,7 +63,8 @@ module.exports = function (app) {
         //     var index = Math.floor(Math.random() * lines.length);
         //     word = words[index];
         // }
-        res.send("hangman");
+
+
     }
 
     var wins = 0;
