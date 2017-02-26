@@ -19,6 +19,31 @@ hangmanApp.directive('draggables', function dragInstructions() {
 // CONTROLLER
 hangmanApp.controller('hangmanController', function hangmanController($scope, $modal, $http) {
 
+    var username;
+    $scope.username = username;
+    $scope.startGame = startGame;
+
+    function startGame() {
+        $http({
+            method: 'GET',
+            url: '/api/' + $scope.username
+        }).then(function(word) {
+            console.log(word.data);
+            $scope.instructionVisible = false;
+            spaceRender(word.data);
+            // selectWord();
+        }),function(error) {
+            alert(error);
+        }
+
+        // if ($scope.instructionVisible) {
+        //
+        // }
+        // else {
+        //     $scope.instructionVisible = true;
+        // }
+
+    }
 
     function playAnother() {
         var modalInstance = $modal.close({
@@ -26,6 +51,24 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
             controller: "hangmanController"
         })
     }
+
+    // Handling the clicked letter
+    $scope.letterClicked = function (index, event) {
+        $scope.letterClickedIndex = index;
+        var letter = alphabet[index];
+
+        $http({
+            method: 'GET',
+            url: '/api/letterClicked',
+            body: letter
+        }).then(function(data) {
+            console.log("reached");
+        }),function(error) {
+            alert(error);
+        }
+
+    }
+
 
     function selectWord() {
         $http({
@@ -94,7 +137,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
     }
 
-    selectWord();
 
 
     function init() {
@@ -128,13 +170,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
     //     })
     // })
 
-    // parses the words.txt and gets a word
-    function start() {
-
-    }
-    start();
-
-
 
 
     $scope.wrongGuesses = wrongGuesses;
@@ -149,12 +184,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
 
     $scope.instructionVisibility = function() {
-        if ($scope.instructionVisible) {
-            $scope.instructionVisible = false;
-        }
-        else {
-            $scope.instructionVisible = true;
-        }
+
     }
 
 
@@ -174,35 +204,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
 
 
-    // Handling the clicked letter
-    $scope.letterClicked = function (index, event) {
-        $scope.letterClickedIndex = index;
-        var letter = alphabet[index];
-        for(var i = 0; i < $scope.word.length; i++) {
-            if($scope.word[i] == letter) {
-                space[i] = letter;
-            }
-
-        }
-        if(!space.includes("_")) {
-            addWins();
-            openWon();
-        }
-        if(!$scope.word.includes(letter)) {
-            wrongGuesses += 1;
-            wrongLetter.push(letter);
-            if(wrongGuesses < 11) {
-                drawArray[wrongGuesses]();
-            }
-            if (wrongGuesses == 10) {
-                addLoses();
-                openLost();
-            }
-
-        }
-        $scope.wrongLetter = wrongLetter;
-        $scope.wrongGuesses = wrongGuesses;
-    }
 
 
     function openLost() {
@@ -236,16 +237,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         context.lineTo($pathTox, $pathToy);
         context.stroke();
     }
-
-    // canvas =  function(){
-    //     console.log("reached");
-    //     myStickman = document.getElementById("stickman");
-    //     context = myStickman.getContext('2d');
-    //     context.beginPath();
-    //     context.strokeStyle = "#fff";
-    //     context.lineWidth = 2;
-    // };
-    // canvas();
 
     head = function(){
         console.log("reached head");

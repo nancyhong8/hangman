@@ -50,10 +50,12 @@
         <h2>Welcome to Nancy's Hangman</h2>
         <ul>
             <li>Select letters by clicking the letter buttons</li>
-            <li>You may guess up to nine incorrect letters</li>
+            <li>You may guess up to ten incorrect letters</li>
             <li>Top right corner lets you restart and read instructions</li>
+            Please enter a username below to retrieve/create game
+            <input ng-model="username" type="text" class="form-control">
             <h3>Good luck!</h3>
-            <a ng-click="instructionVisibility()" class="btn btn-primary">Okay</a>
+            <a ng-click="startGame()" class="btn btn-primary">Okay</a>
         </ul>
     </div>
 
