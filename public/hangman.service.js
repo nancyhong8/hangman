@@ -11,11 +11,17 @@ module.exports = function (app) {
     var GameModel = require('mongoose').model('Game');
     // give the database the username
     // req will pass the username in the url
-    // res will send a good status
+    // res will send a word randomly selected
     function makeUsername(req, res) {
-        console.log("reached makeuser");
+
         var username = req.params['username'];
-        var word = selectRandomWord();
+        var words = [];
+
+        selectWord(function(word) {
+            var word = word;
+        })
+
+        //create the player object in the database
         var newGame = new GameModel(
             {   _id: username,
                 word: word,
@@ -32,7 +38,7 @@ module.exports = function (app) {
             if (err) return console.error(err);
             console.log("my database: " + kittens );
         })
-        res.send(word);
+        res.send(word.replace(/\r?\n|\r/,''));
     }
 
     function letterClicked(req, res) {
@@ -41,7 +47,6 @@ module.exports = function (app) {
             if(word[i] == letter) {
                 space[i] = letter;
             }
-
         }
         if(!space.includes("_")) {
             addWins();
@@ -63,25 +68,7 @@ module.exports = function (app) {
 
     var word;
 
-    function selectRandomWord() {
-        var words = [];
-        fs = require('fs');
-        fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
-            if(err) {
-                console.log("couldnt open word file: " + err);
-            }
-            else {
-                var lines = data.split('\n');
-                for (var i = 0; i < lines.length; i++) {
-                    words.push(lines[i]);
-                }
-                var index = Math.floor(Math.random() * lines.length);
-                word = words[index];
-                console.log("from the selectRnadomWord " + word);
-                return word;
-            }
-        })
-    }
+
 
     function selectWord(req, res) {
         var words = [];
@@ -105,6 +92,27 @@ module.exports = function (app) {
         })
     }
 
+    function selectWord(callback) {
+        var words = [];
+
+        fs = require('fs');
+        fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
+            if(err) {
+                console.log("couldnt open word file: " + err);
+            }
+            else {
+                var lines = data.split('\n');
+                for (var i = 0; i < lines.length; i++) {
+                    words.push(lines[i]);
+                }
+                var index = Math.floor(Math.random() * lines.length);
+                word = words[index];
+                console.log(word);
+                //res.send(word.replace(/\r?\n|\r/,''));
+                callback(word.replace(/\r?\n|\r/,''));
+            }
+        })
+    }
 
 
 

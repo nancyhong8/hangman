@@ -31,32 +31,22 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
             console.log(word.data);
             $scope.instructionVisible = false;
             spaceRender(word.data);
-            // selectWord();
         }),function(error) {
             alert(error);
         }
-
-        // if ($scope.instructionVisible) {
-        //
-        // }
-        // else {
-        //     $scope.instructionVisible = true;
-        // }
-
     }
 
-    function playAnother() {
-        var modalInstance = $modal.close({
-            templateUrl: "templates/loser.html",
-            controller: "hangmanController"
-        })
-    }
+    // function playAnother() {
+    //     var modalInstance = $modal.close({
+    //         templateUrl: "templates/loser.html",
+    //         controller: "hangmanController"
+    //     })
+    // }
 
     // Handling the clicked letter
     $scope.letterClicked = function (index, event) {
         $scope.letterClickedIndex = index;
         var letter = alphabet[index];
-
         $http({
             method: 'GET',
             url: '/api/letterClicked',
