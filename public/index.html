@@ -25,9 +25,9 @@
         <h2 class="white-color">
             <div class="right-side-glyphicon">
 
-                <a ng-click="instructionVisibility()">
-                    <span title="Instructions" class="glyphicon glyphicon-info-sign"></span>
-                </a>
+                <!--<a ng-click="instructionVisibility()">-->
+                    <!--<span title="Instructions" class="glyphicon glyphicon-info-sign"></span>-->
+                <!--</a>-->
                 <a ng-click="init()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
@@ -44,7 +44,6 @@
 
 
 
-
 <div>
     <div id="instructions" draggables="" ng-show="instructionVisible">
         <h2>Welcome to Nancy's Hangman</h2>
@@ -52,8 +51,13 @@
             <li>Select letters by clicking the letter buttons</li>
             <li>You may guess up to ten incorrect letters</li>
             <li>Top right corner lets you restart and read instructions</li>
-            Please enter a username below to retrieve/create game
-            <input ng-model="username" type="text" class="form-control">
+            <div ng-show="usernameTaken" class="alert alert-danger" role="alert">
+                {{usernameTakenMSG}}
+            </div>
+            Please enter a new username below to create game
+            <input ng-model="newUsername" type="text" class="form-control">
+            Please enter an existing username below to retrieve game
+            <input ng-model="oldUsername" type="text" class="form-control">
             <h3>Good luck!</h3>
             <a ng-click="startGame()" class="btn btn-primary">Okay</a>
         </ul>
@@ -80,7 +84,9 @@
             {{alreadyGuessedLetter}}
         </div>
 
-
+        <div ng-show="alreadyGuessed" class="alert alert-danger" role="alert">
+            {{letterAlreadyGuessed}}
+        </div>
 
         <!-- wording -->
         <div class="centered" class="container-fluid">
@@ -99,7 +105,7 @@
         Wins: {{wins}}
         <div class="wrongGuesses" >
             Wrong Guesses: {{wrongGuesses}} out of 10
-            <br/>Wrong Letters: {{arrayToString(wrongLetter)}}
+            <br/>Wrong Letters: {{wrongLetter}}
         </div>
 
         <div class="center">

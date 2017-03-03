@@ -19,39 +19,129 @@ hangmanApp.directive('draggables', function dragInstructions() {
 // CONTROLLER
 hangmanApp.controller('hangmanController', function hangmanController($scope, $modal, $http) {
 
-    var username;
-    $scope.username = username;
+    var newUsername;
+    $scope.newUsername = newUsername;
+    var oldUsername;
+    $scope.oldUsername = oldUsername;
     $scope.startGame = startGame;
+    var word;
+    $scope.instructionVisible = true;
+    var alphabet = [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+    ]
+    $scope.alphabet = alphabet;
 
+
+    // renders game by setting all the variables taken from server
+    function renderGame(game) {
+        word = game.word
+        $scope.loses = game.loses;
+        $scope.wins = game.wins;
+        $scope.wrongGuesses = game.wrongLetters.length;
+        $scope.wrongLetter = game.wrongLetters.toString();
+        if(game.wrongLetters.length > 0 && game.wrongLetters.length < 11) {
+            drawArray[game.wrongLetters.length]();
+        }
+        console.log("game from newGame: " + game.data);
+        console.log("word from newGame: " + word);
+        spaceRender(game.spaces);
+    }
+
+    // starts the game by sending the username
+    // to the database, depending whether its new or old
+    // and gets sent back either a username error
+    // or otherwise a word
     function startGame() {
-        $http({
-            method: 'GET',
-            url: '/api/' + $scope.username
-        }).then(function(word) {
-            console.log(word.data);
-            $scope.instructionVisible = false;
-            spaceRender(word.data);
-        }),function(error) {
-            alert(error);
+
+        if ($scope.newUsername != null) {
+            $http({
+                method: 'GET',
+                url: '/api/new/' + $scope.newUsername
+            }).then(function(game) {
+                console.log(game.data);
+                if (game.data == "usernameTaken") {
+                    $scope.usernameTaken = true;
+                    $scope.usernameTakenMSG = "This username is taken";
+                } else {
+                    $scope.instructionVisible = false;
+                    renderGame(game.data);
+                }
+
+            }),function(error) {
+                alert(error);
+            }
+        }
+        if ($scope.oldUsername != null) {
+            console.log("reached oldusername");
+            $http({
+                method: 'GET',
+                url: '/api/old/' + $scope.oldUsername
+            }).then(function(game) {
+                console.log(game.data);
+                if (game.data == "noUsername") {
+                    $scope.usernameTaken = true;
+                    $scope.usernameTakenMSG = "This username does not exist";
+                } else {
+                    $scope.instructionVisible = false;
+                    renderGame(game.data);
+                }
+
+            }),function(error) {
+                alert(error);
+            }
         }
     }
 
-    // function playAnother() {
-    //     var modalInstance = $modal.close({
-    //         templateUrl: "templates/loser.html",
-    //         controller: "hangmanController"
-    //     })
-    // }
+
+
+    $scope.playAnother = function() {
+        $scope.oldUsername = oldUsername;
+        startGame();
+        modalInstance = $modal.close({
+            templateUrl: "templates/loser.html"
+        });
+        // $scope.instructionVisible = false;
+        // location.reload();
+
+        // $('modalInstance').modal('hide');
+
+    }
+
+
 
     // Handling the clicked letter
+    // sends letter to the server to handle
+    // then receives back a new game state
     $scope.letterClicked = function (index, event) {
+        $scope.alreadyGuessed = false;
+        console.log($scope.space);
         $scope.letterClickedIndex = index;
+
         var letter = alphabet[index];
         $http({
             method: 'GET',
-            url: '/api/letterClicked',
-            body: letter
-        }).then(function(data) {
+            url: '/api/letterClicked/' + letter
+
+        }).then(function(game) {
+            if(game.data == "alreadyGuessed") {
+                $scope.alreadyGuessed = true;
+                $scope.letterAlreadyGuessed = "This letter has already been guessed";
+                return;
+            }
+            renderGame(game.data);
+
+            if(!game.data.spaces.includes("_")) {
+                openWon();
+            }
+            if(!game.data.word.includes(letter)) {
+                if (game.data.wrongLetters.length == 10) {
+                    openLost();
+                }
+
+            }
+
+            console.log("game from letterClicked: " + game.data);
             console.log("reached");
         }),function(error) {
             alert(error);
@@ -59,88 +149,133 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
     }
 
+    // function spaceRender2(word) {
+    //     for (i = 0; i < word.length; i++) {
+    //         if (word[i] === "-") {
+    //             space.push("-");
+    //         }
+    //         else {
+    //             space.push("_");
+    //         }
+    //     }
+    //     $scope.space = space;
+    //     $scope.word = word;
+    // }
 
-    function selectWord() {
-        $http({
-            method: 'GET',
-            url: '/api/word'
-        }).then(function(word) {
-            console.log(word.data);
-            if (word.data.length < 4) {
-                console.log("short word");
-                selectWord();
-                return;
-            }
-            spaceRender(word.data);
-        }),function(error) {
-            alert("error!");
-        }
-    }
-    $scope.selectWord = selectWord;
-
-    $scope.loses = getLoses;
-    function getLoses() {
-        $http({
-            method: 'GET',
-            url: '/api/getLoses'
-        }).then(function(loses) {
-            $scope.loses = loses.data;
-        }),function(error) {
-            alert("error!");
-        }
-    }
-    getLoses();
-
-    $scope.wins = getWins;
-    function getWins() {
-        $http({
-            method: 'GET',
-            url: '/api/getWins'
-        }).then(function(wins) {
-            $scope.wins = wins.data;
-        }),function(error) {
-            alert("error!");
-        }
-    }
-    getWins();
-
-    function addWins() {
-        $http({
-            method: 'GET',
-            url: '/api/addWin'
-        }).then(function(wins) {
-            $scope.wins = wins.data;
-        }),function(error) {
-            alert("error!");
-        }
+    function spaceRender(spaces) {
+        // for (i = 0; i < spaces.length; i++) {
+        //     if (word[i] === "-") {
+        //         space.push("-");
+        //     }
+        //     else {
+        //         space.push("_");
+        //     }
+        // }
+        $scope.space = spaces;
+        $scope.word = word;
     }
 
-    function addLoses() {
-        $http({
-            method: 'GET',
-            url: '/api/addLose'
-        }).then(function(loses) {
-            $scope.loses = loses.data;
-        }),function(error) {
-            alert("error!");
-        }
+    // Handling the clicked letter
+    // $scope.letterClicked2 = function (index, event) {
+    //     console.log($scope.space);
+    //     $scope.letterClickedIndex = index;
+    //
+    //     var letter = alphabet[index];
+    //     $http({
+    //         method: 'PUT',
+    //         url: '/api/letterClicked/'
+    //
+    //
+    //     }).then(function(data) {
+    //         console.log("reached");
+    //     }),function(error) {
+    //         alert(error);
+    //     }
+    //
+    // }
 
-    }
+    //
+    // function selectWord() {
+    //     $http({
+    //         method: 'GET',
+    //         url: '/api/word'
+    //     }).then(function(word) {
+    //         console.log(word.data);
+    //         if (word.data.length < 4) {
+    //             console.log("short word");
+    //             selectWord();
+    //             return;
+    //         }
+    //         spaceRender(word.data);
+    //     }),function(error) {
+    //         alert("error!");
+    //     }
+    // }
+    // $scope.selectWord = selectWord;
+
+    // $scope.loses = getLoses;
+    // function getLoses() {
+    //     $http({
+    //         method: 'GET',
+    //         url: '/api/getLoses'
+    //     }).then(function(loses) {
+    //         $scope.loses = loses.data;
+    //     }),function(error) {
+    //         alert("error!");
+    //     }
+    // }
+    // // getLoses();
+    //
+    // // $scope.wins = getWins;
+    // function getWins() {
+    //     $http({
+    //         method: 'GET',
+    //         url: '/api/getWins'
+    //     }).then(function(wins) {
+    //         $scope.wins = wins.data;
+    //     }),function(error) {
+    //         alert("error!");
+    //     }
+    // }
+    // // getWins();
+    //
+    // function addWins() {
+    //     $http({
+    //         method: 'GET',
+    //         url: '/api/addWin'
+    //     }).then(function(wins) {
+    //         $scope.wins = wins.data;
+    //     }),function(error) {
+    //         alert("error!");
+    //     }
+    // }
+    //
+    // function addLoses() {
+    //     $http({
+    //         method: 'GET',
+    //         url: '/api/addLose'
+    //     }).then(function(loses) {
+    //         $scope.loses = loses.data;
+    //     }),function(error) {
+    //         alert("error!");
+    //     }
+    //
+    // }
+    //
+    //
+    //
+    // function init() {
+    //     document.location.reload();
+    // }
+    // $scope.init = init;
 
 
 
-    function init() {
-        document.location.reload();
-    }
-    $scope.init = init;
 
-
-
-
-    var wrongLetter = [];
-    var space = [];
-    var wrongGuesses = 0;
-    var words = [];
+    // var wrongLetter = [];
+    // var space = [];
+    // var wrongGuesses = 0;
+    // var words = [];
 
     // $(document).ready(function() {
     //     $.get('words.txt', function(data) {
@@ -162,59 +297,41 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
 
 
 
-    $scope.wrongGuesses = wrongGuesses;
-    $scope.instructionVisible = true;
+    // $scope.wrongGuesses = wrongGuesses;
 
 
-    var alphabet = [
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    ]
-    $scope.alphabet = alphabet;
 
-
-    $scope.instructionVisibility = function() {
-
-    }
+    // $scope.instructionVisibility = function() {
+    //
+    // }
 
 
     // Handles the spaces for the letters of the word
-    function spaceRender(word) {
-        for (i = 0; i < word.length; i++) {
-            if (word[i] === "-") {
-                space.push("-");
-            }
-            else {
-                space.push("_");
-            }
-        }
-        $scope.space = space;
-        $scope.word = word;
-    }
 
 
 
 
 
+    var modalInstance;
     function openLost() {
-        var modalInstance = $modal.open({
+        modalInstance = $modal.open({
             templateUrl: "templates/loser.html",
             controller: "hangmanController"
         })
     }
     function openWon() {
-        var modalInstance = $modal.open({
+        modalInstance = $modal.open({
             templateUrl: "templates/winner.html",
             controller: "hangmanController"
         })
     }
-
-    $scope.openLost = openLost;
-    $scope.arrayToString = function(string){
-        if (string != null) {
-            return string.join(", ");
-        }
-    };
+    //
+    // $scope.openLost = openLost;
+    // $scope.arrayToString = function(string){
+    //     if (string != null) {
+    //         return string.join(", ");
+    //     }
+    // };
 
 
 
@@ -275,7 +392,8 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $m
         draw (60, 70, 20, 100);
     };
 
-    drawArray = [frame0, frame1, frame2, frame3, frame4, head, torso, leftArm, rightArm, leftLeg, rightLeg]
+
+    drawArray = [frame0, frame1, frame2, frame3, frame4, head, torso, leftArm, rightArm, leftLeg, rightLeg];
 
 
 
