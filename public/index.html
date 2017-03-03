@@ -25,10 +25,7 @@
         <h2 class="white-color">
             <div class="right-side-glyphicon">
 
-                <!--<a ng-click="instructionVisibility()">-->
-                    <!--<span title="Instructions" class="glyphicon glyphicon-info-sign"></span>-->
-                <!--</a>-->
-                <a ng-click="init()">
+                <a ng-click="playAnother()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
 
@@ -43,14 +40,14 @@
 
 
 
-
+<!-- INSTRUCTIONS -->
 <div>
     <div id="instructions" draggables="" ng-show="instructionVisible">
         <h2>Welcome to Nancy's Hangman</h2>
         <ul>
             <li>Select letters by clicking the letter buttons</li>
             <li>You may guess up to ten incorrect letters</li>
-            <li>Top right corner lets you restart and read instructions</li>
+            <li>Top right corner lets you restart</li>
             <div ng-show="usernameTaken" class="alert alert-danger" role="alert">
                 {{usernameTakenMSG}}
             </div>
@@ -64,12 +61,10 @@
     </div>
 
 
+<div class="container-fluid">
 
 <!-- WORD -->
 <div class="col-xs-8">
-
-
-
     <div>
         <!-- alphabet -->
         <div class="container-fluid">
@@ -80,10 +75,7 @@
             </ul>
         </div>
 
-        <div ng-show="alreadyGuessedLetter" class="alert alert-danger" role="alert">
-            {{alreadyGuessedLetter}}
-        </div>
-
+        <!-- ERROR MESSAGE FOR ALREADY CHOSEN LETTTER -->
         <div ng-show="alreadyGuessed" class="alert alert-danger" role="alert">
             {{letterAlreadyGuessed}}
         </div>
@@ -118,20 +110,7 @@
 <!-- HANGING MAN END -->
 
 </div>
-
-
-<!-- FOOTER -->
-<!--<div class="sticky-footer">-->
-    <!--<div class="container-fluid">-->
-        <!--<h2>-->
-            <!--<div class="right-side-glyphicon">-->
-            <!--<a>-->
-                <!--<span class="glyphicon glyphicon-user" class="dropbtn"></span>-->
-            <!--</a>-->
-            <!--</div>-->
-        <!--</h2>-->
-    <!--</div>-->
-<!--</div>-->
+</div>
 
 <div class="sticky-footer">
     <div class="container-fluid">

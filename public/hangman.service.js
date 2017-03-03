@@ -1,16 +1,15 @@
-module.exports = function (app) {
+// SERVER
 
-    // app.get("/api/getLoses", getLoses);
-    // app.get("/api/addLose", addLose);
-    app.get("/api/word", selectWord);
-    // app.get("/api/addWin", addWin);
-    // app.get("/api/getWins", getWins);
+module.exports = function (app) {
+    // HTTP call map
     app.get("/api/letterClicked/:letter", letterClicked);
     app.get("/api/new/:username", makeUsername);
     app.get("/api/old/:username", retrieveUsername);
 
-
-
+    /**
+     *   Setting up the database
+     *   creating a modal for a game
+     */
     var mongoose = require('mongoose');
     mongoose.connect('mongodb://localhost/HangmanDB');
     var gameSchema = new mongoose.Schema(
@@ -28,22 +27,26 @@ module.exports = function (app) {
 
 
     var word;
-    // var spaces = [];
     var game;
-    // Uses and existing username key to update
-    // user's word and send back the word to render
+
+    /**
+     * Uses an existing username key to retrieve game
+     * from the database
+     * @param req contains the username
+     * @param res sends back the retrieved game for the username
+     *         or a message that the user doesn't exist
+     */
+
     function retrieveUsername(req, res) {
-        console.log("reached retrivee");
         var username = req.params['username'];
-        console.log("old username: " + username);
         var words = [];
 
+        // Try to find the game using the username given
         GameModel.findOne({_id: username}, function(err, oldGame) {
-
+            // Send back the game to the controller
             if (oldGame) {
                 selectWord(function(wordSelected) {
                     word = wordSelected;
-                    console.log("wordSelected: " + wordSelected);
                     oldGame.word = wordSelected;
                     oldGame.spaces = [];
                     oldGame.wrongLetters = [];
@@ -55,29 +58,33 @@ module.exports = function (app) {
                         if (err)
                             return console.error(err);
                     });
-                    // res.send(wordSelected.replace(/\r?\n|\r/,''));
                     game = oldGame;
-                    console.log("updated oldgame: " + oldGame);
-                    console.log("updated game: " + game);
                     res.send(oldGame);
                 })
 
-            } else {
+            }
+            // If the username doesnt exist
+            else {
                 console.log("reached error");
                 res.send("noUsername");
             }
         })
     }
 
-    // give the database the username
-    // req will pass the username in the url
-    // res will send a word randomly selected
+    /**
+     * Makes a game for the given username in the
+     * database
+     * @param req contains the given username
+     * @param res sends back a game created or
+     *        message that the username is already taken
+     */
     function makeUsername(req, res) {
 
         var username = req.params['username'];
         var words = [];
 
         GameModel.count({_id: username}, function (err, count) {
+            // Checks if username already exists
             if (count > 0) {
                 res.send("usernameTaken");
             } else {
@@ -99,17 +106,19 @@ module.exports = function (app) {
                         newGame.spaces.push("_");
                     }
 
-                    console.log("new Game: " + newGame);
-                    console.log("new Game id: " + newGame._id);
                     game = newGame;
                     res.send(newGame);
-                    // res.send(wordSelected.replace(/\r?\n|\r/,''));
                 })
             }
         })
     }
 
 
+    /**
+     *
+     * @param req
+     * @param res
+     */
     function letterClicked(req, res) {
         var letter = req.params['letter'];
 
