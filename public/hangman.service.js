@@ -115,15 +115,15 @@ module.exports = function (app) {
 
 
     /**
-     *
-     * @param req
-     * @param res
+     * handles the letter clicked
+     * @param req contains the letter clicked
+     * @param res sends back the altered game
      */
     function letterClicked(req, res) {
         var letter = req.params['letter'];
 
-        console.log(letter)
-        console.log("spaces: " + game.spaces.length)
+        // check if the letter has been guessed,
+        // if so, send the message to the controller to render
         if(game.guessedLetters.includes(letter)) {
             res.send("alreadyGuessed");
             return;
@@ -135,18 +135,15 @@ module.exports = function (app) {
                 game.spaces[i] = letter;
             }
         }
-        console.log(game.spaces);
 
         if(!game.spaces.includes("_")) {
             game.wins = game.wins + 1;
-            // openWon();
         }
         if(!word.includes(letter)) {
             game.wrongLetters.push(letter);
 
             if (game.wrongLetters.length == 10) {
                 game.loses = game.loses + 1;
-                // openLost();
             }
 
         }
@@ -158,32 +155,12 @@ module.exports = function (app) {
         res.send(game);
     }
 
-
-
-
-
-    // function selectWord(req, res) {
-    //     var words = [];
-    //
-    //     fs = require('fs');
-    //     fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
-    //         if(err) {
-    //             console.log("couldnt open word file: " + err);
-    //         }
-    //         else {
-    //             var lines = data.split('\n');
-    //             for (var i = 0; i < lines.length; i++) {
-    //                 words.push(lines[i]);
-    //             }
-    //             var index = Math.floor(Math.random() * lines.length);
-    //             word = words[index];
-    //             console.log(word);
-    //             res.send(word.replace(/\r?\n|\r/,''));
-    //
-    //         }
-    //     })
-    // }
-
+    /**
+     * selects a word from the word.txt file
+     * and then evokes the callback method that
+     * handles the word once its successfully found
+     * @param callback
+     */
     function selectWord(callback) {
         var words = [];
 
@@ -199,35 +176,14 @@ module.exports = function (app) {
                 }
                 var index = Math.floor(Math.random() * lines.length);
                 word = words[index];
-                console.log(word);
-                //res.send(word.replace(/\r?\n|\r/,''));
-                callback(word.replace(/\r?\n|\r/,''));
+                if(word.length < 4) {
+                    selectWord(callback);
+                } else {
+                    callback(word.replace(/\r?\n|\r/,''));
+                }
+
             }
         })
     }
-
-
-
-    //
-    // var wins = 0;
-    // var loses = 0;
-    // function addWin(req, res) {
-    //     wins = wins + 1;
-    //     console.log(wins);
-    //     res.send(wins.toString());
-    // }
-    // function addLose(req, res) {
-    //     loses = loses + 1;
-    //     res.send(loses.toString());
-    // }
-    // function getLoses(req, res) {
-    //     res.send(loses.toString());
-    // }
-    // function getWins(req, res) {
-    //     res.send(wins.toString());
-    // }
-
-
-
 
 }

@@ -77,6 +77,10 @@ table {
 }
 
 
+.overlay {
+    z-index: 10;
+}
+
 #instructions {
     margin-left: 25%;
     width: 500px;
