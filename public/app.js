@@ -1,12 +1,12 @@
 
 var hangmanApp = angular.module('hangmanApp', ['angularModalService']);
 
+// CONTROLLER
+// for modal
 hangmanApp.controller('ModalController', function($scope, close) {
-
     $scope.close = function(result) {
         close(result, 500);
     }
-
 });
 
 // DIRECTIVE
@@ -25,7 +25,6 @@ hangmanApp.directive('draggables', function dragInstructions() {
 
 // CONTROLLER
 hangmanApp.controller('hangmanController', function hangmanController($scope, $http, ModalService) {
-
 
 
     var newUsername;
@@ -49,12 +48,16 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param game
      */
     function renderGame(game) {
+        console.log("reached renderGame");
+        console.log("wronglettter length: " + game.wrongLetters.length);
         word = game.word
         $scope.loses = game.loses;
         $scope.wins = game.wins;
         $scope.wrongGuesses = game.wrongLetters.length;
         $scope.wrongLetter = game.wrongLetters.toString();
         if(game.wrongLetters.length > 0 && game.wrongLetters.length < 11) {
+            console.log("reach drawArray" + game.wrongLetters.length);
+
             drawArray[game.wrongLetters.length]();
         }
         spaceRender(game.spaces);
@@ -100,7 +103,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
         }
         // if username exists
         if ($scope.oldUsername != null) {
-            console.log("reached oldusername");
+            console.log("reached old game");
             $http({
                 method: 'GET',
                 url: '/api/old/' + $scope.oldUsername
@@ -150,13 +153,16 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
             // check if game is won
             if(!game.data.spaces.includes("_")) {
                 openWon();
+                empty();
                 startGame();
             }
             // check if game is lost
             if(!game.data.word.includes(letter)) {
                 if (game.data.wrongLetters.length == 10) {
                     openLost();
+                    empty();
                     startGame();
+
                 }
 
             }
@@ -166,15 +172,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
 
     }
 
-    // Starts a new game
-    $scope.playAnother = function() {
-        $scope.oldUsername = oldUsername;
-        Modal.Service.close.then(function(result) {
-            console.log(result);
-        });
-        startGame();
-
-    }
 
     // When the game is lose or won,
     // using $modal, open a html modal template
@@ -186,9 +183,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
             modal.close.then(function(result) {
                 console.log(result);
             });
-
         });
-
     }
     function openWon() {
         ModalService.showModal({
@@ -222,15 +217,23 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param $pathToy finish y
      */
     draw = function($pathFromx, $pathFromy, $pathTox, $pathToy) {
+
         myStickman = document.getElementById("myCanvas");
         context = myStickman.getContext('2d');
+        context.beginPath();
         context.moveTo($pathFromx, $pathFromy);
         context.lineTo($pathTox, $pathToy);
         context.stroke();
+        context.closePath();
+    }
+
+    function empty() {
+        myStickman = document.getElementById('myCanvas');
+        context = myStickman.getContext('2d');
+        context = context.clearRect(0, 0, 180, 200);
     }
 
     head = function(){
-        console.log("reached head");
         myStickman = document.getElementById("myCanvas");
         context = myStickman.getContext('2d');
         context.beginPath();

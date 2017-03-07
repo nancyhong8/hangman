@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 var server = require("../server.js");
 
 var request = require("request");
-var retrievedGame = require("hangman.service.js");
+var retrievedGame = require("../public/hangman.service.js");
 
 // describe('server response', function() {
 //     before(function() {

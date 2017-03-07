@@ -11,7 +11,7 @@ module.exports = function (app) {
      *   creating a modal for a game
      */
     var mongoose = require('mongoose');
-    mongoose.connect('mongodb://localhost/HangmanDB');
+    mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
     var gameSchema = new mongoose.Schema(
         {   _id: {type: String, required: true},
             word: {type: String, required: true},
