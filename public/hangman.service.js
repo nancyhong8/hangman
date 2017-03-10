@@ -7,8 +7,8 @@ module.exports = function (app) {
     app.get("/api/old/:username", retrieveUsername);
 
     /**
-     *   Setting up the database
-     *   creating a modal for a game
+     *   Setting up the database (using mLab)
+     *   creating a model for a game
      */
     var mongoose = require('mongoose');
     mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
@@ -25,7 +25,6 @@ module.exports = function (app) {
     var GameModel = mongoose.model('Game', gameSchema);
 
 
-
     var word;
     var game;
 
@@ -36,7 +35,6 @@ module.exports = function (app) {
      * @param res sends back the retrieved game for the username
      *         or a message that the user doesn't exist
      */
-
     function retrieveUsername(req, res) {
         var username = req.params['username'];
         var words = [];
@@ -65,7 +63,6 @@ module.exports = function (app) {
             }
             // If the username doesnt exist
             else {
-                console.log("reached error");
                 res.send("noUsername");
             }
         })
@@ -159,6 +156,7 @@ module.exports = function (app) {
      * selects a word from the word.txt file
      * and then evokes the callback method that
      * handles the word once its successfully found
+     * word.txt file was taken from https://github.com/Xethron/Hangman
      * @param callback
      */
     function selectWord(callback) {

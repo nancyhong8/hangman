@@ -24,8 +24,8 @@ hangmanApp.directive('draggables', function dragInstructions() {
 
 
 // CONTROLLER
+// for hangman
 hangmanApp.controller('hangmanController', function hangmanController($scope, $http, ModalService) {
-
 
     var newUsername;
     $scope.newUsername = newUsername;
@@ -50,8 +50,6 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      */
     function renderGame(game) {
         $scope.game = game;
-        console.log("reached renderGame");
-        console.log("wronglettter length: " + game.wrongLetters.length);
         $scope.word = game.word;
         $scope.loses = game.loses;
         $scope.wins = game.wins;
@@ -65,6 +63,11 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
         spaceRender(game.spaces);
     }
 
+    /**
+     * renders the spaces for the word of the game,
+     * either as '_' or the letter of the word if it has been guessed
+     * @param spaces the array containing either "_" or the letter guessed
+     */
     function spaceRender(spaces) {
         console.log("reached spaces: " + spaces)
         for(i = 0; i < spaces; i ++) {
@@ -102,9 +105,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
                 $scope.testing = 2;
                 alert(error);
             }
-            if(!$rootScope.$$phase) {
-                $rootScope.$apply();    //AngularJS 1.1.4 fix
-            }
+
         }
         // if username exists
         if ($scope.oldUsername != null) {
@@ -127,9 +128,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
                 alert(error);
             }
 
-            if(!$rootScope.$$phase) {
-                $rootScope.$apply();    //AngularJS 1.1.4 fix
-            }
+
         }
     }
 
@@ -178,9 +177,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
         }),function(error) {
             alert(error);
         }
-        if(!$rootScope.$$phase) {
-            $rootScope.$apply();    //AngularJS 1.1.4 fix
-        }
+
 
     }
 
@@ -241,7 +238,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
 
     function empty() {
         myStickman = document.getElementById('myCanvas');
-        context = myStickman.getContext('2d');
+        context = myStickman.getContext('2d', {});
         context = context.clearRect(0, 0, 180, 200);
     }
 

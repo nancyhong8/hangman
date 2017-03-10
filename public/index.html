@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="hangmanApp">
 <head>
-    <!--<script type='text/javascript' src='ngPopup.js'></script>-->
-
 
     <link href="css/style.css" rel="stylesheet"/>
-    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
     <script
             src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"
             integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
             crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/boot.min.js"></script>
 
     <script src="js/angular.js"></script>
     <script src="js/angular-route.js"></script>
@@ -18,25 +16,16 @@
 
     <script src="app.js"></script>
 
-
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/boot.min.js"></script>-->
-    <!--<script scr="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/jasmine-html.js"></script>-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="js/ui-bootstrap-tpls-0.12.0.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
-    <!--<script src="../node_modules/angular-modal-service/dst/angular-modal-service.min.js"></script>-->
 
     <meta charset="UTF-8">
-    <!--<script src="../test/testApp.js"></script>-->
-    <title>Hangman Page</title>
 
-
-
-
+    <title>Nancy's Hangman</title>
 
 </head>
+
+
 
 
 <body ng-controller="hangmanController" ng-app="hangmanApp">
@@ -47,7 +36,7 @@
         <h2 class="white-color">
             <div class="right-side-glyphicon">
 
-                <a ng-click="playAnother()">
+                <a ng-click="startGame()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
 
@@ -85,7 +74,7 @@
 
 <div class="container-fluid">
 
-<!-- WORD -->
+<!-- LEFT SIDE WHERE THE LETTER HANDLING IS RENDERED-->
 <div class="col-xs-8">
     <div>
         <!-- alphabet -->
@@ -109,9 +98,9 @@
 
     </div>
 </div>
-<!-- WORD ENDING -->
+<!-- LEFT SIDE ENDING -->
 
-<!-- HANGING MAN -->
+<!-- HANGING MAN AND SCORE -->
 <div class="col-xs-4">
 
     <div class="container-fluid">
@@ -134,6 +123,8 @@
 </div>
 </div>
 
+
+<!-- FOOTER -->
 <div class="sticky-footer">
     <div class="container-fluid">
         <h2>

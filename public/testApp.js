@@ -12,8 +12,40 @@ describe('testing controller', function() {
         httpBackend = $httpBackend;
 
         httpBackend
-            .when('GET', 'http://localhost:4000/api/new/testing')
-            .respond(200, {_id: 'testing'});
+            .when('GET', '/api/new/testing10')
+            .respond(200, {
+                _id: 'testing10',
+                word: 'hangman',
+                wins: 0,
+                loses: 0,
+                guessedLetters: [],
+                wrongLetters: [],
+                spaces: []
+            });
+
+        httpBackend
+            .when('GET', '/api/old/testing')
+            .respond(200, {
+                _id: 'testing',
+                word: 'hangman',
+                wins: 4,
+                loses: 5,
+                guessedLetters: [],
+                wrongLetters: [],
+                spaces: ['_']
+            });
+
+        httpBackend
+            .when('GET', '/api/letterClicked/m')
+            .respond(200, {
+                _id: 'testing',
+                word: 'hangman',
+                wins: 0,
+                loses: 0,
+                guessedLetters: ['m'],
+                wrongLetters: [],
+                spaces: ['_']
+            });
 
     }))
 
@@ -25,129 +57,45 @@ describe('testing controller', function() {
 
 
 
-    it("should work", function() {
+    it("should successfully return a game using an old username", function() {
         ctrl = controller('hangmanController', {$scope: scope});
-
+        scope.oldUsername = 'testing';
+        scope.startGame();
         httpBackend.flush();
         expect(scope.instructionVisible).toBe(false);
+        expect(scope.word).toEqual('hangman');
+        expect(scope.wins).toEqual(4);
+        expect(scope.loses).toEqual(5);
+        expect(scope.wrongGuesses).toEqual(0);
+    })
+
+    it("should successfully return a game using a new username", function() {
+        ctrl = controller('hangmanController', {$scope: scope});
+        scope.newUsername = 'testing10';
+        scope.oldUsername = null;
+        scope.startGame();
+        httpBackend.flush();
+        expect(scope.instructionVisible).toBe(false);
+        expect(scope.word).toEqual('hangman');
+        expect(scope.wins).toEqual(0);
+        expect(scope.loses).toEqual(0);
+        expect(scope.wrongGuesses).toEqual(0);
 
     })
 
-    // beforeEach(module('hangmanApp'));
-
-    // var $controller;
-
-    // beforeEach(inject(function(_$controller_) {
-    //     $controller = _$controller_;
-    // }));
-
-
-
-    // var scope, httpBackend, $controller;
-    //
-    // beforeEach(module('hangmanApp'));
-    //
-    // beforeEach(inject(function($rootScope, $httpBackend, $controller) {
-    //     httpBackend = $httpBackend;
-    //     $controller = $controller;
-        // scope = $rootScope.$new();
-        //
-        // createController = function() {
-        //     return $controller('hangmanController', {
-        //         '$scope': scope
-        //     });
-        // };
+    it("should successfully return a game changed when a letter is clicked", function() {
+        ctrl = controller('hangmanController', {$scope: scope});
+        scope.oldUsername = 'testing';
+        scope.newUsername = null;
+        scope.letterClicked(12);
+        httpBackend.flush();
+        expect(scope.word).toEqual('hangman');
+        expect(scope.wins).toEqual(0);
+        expect(scope.loses).toEqual(0);
+        expect(scope.wrongGuesses).toEqual(0);
+    })
 
 
-    // }));
-
-    // afterEach(function() {
-    //     httpBackend.verifyNoOutstandingExpectation();
-    //     httpBackend.verifyNoOutstandingRequest();
-    // });
-
-
-    // beforeEach(
-    //     inject(function( $httpBackend, $rootScope, $controller) {
-    //         var httpBackend = _$httpBackend_;
-    //         var $scope = {};
-    //         var controller = $controller('hangmanController', {$scope: $scope});
-    //     }));
-
-
-    //
-    // it("the http calls should respond with a successful status", function() {
-    //
-    //     var $scope = {};
-    //     var controller = $controller('hangmanController', {$scope: $scope});
-    //
-    //     $scope.word = 'hangman';
-    //
-    //     httpBackend
-    //         .when('GET', 'http://localhost:4000/api/new/testing')
-    //         .respond(200, {_id: 'testing'});
-    //
-    //     expect($scope.instructionVisible).toBe(false);
-    //     expect($scope.game).toEqual({_id: 'testing'});
-
-        // $httpBackend
-        //     .when('GET', 'http://localhost:4000/api/old/testingNew')
-        //     .respond(200, {_id: 'testing'})
-        //
-        // // $httpBackend.flush();
-        //
-        //
-        //
-        // $httpBackend
-        //     .when('GET', 'http://localhost:4000/api/letterClicked/m')
-        //     .respond(200);
-
-        // var nock = require('nock');
-        //
-        // var couchdb = nock('http://myapp.iriscouch.com')
-        //     .get('/api/old/testing')
-        //     .reply(200, {
-        //         _id: 'testing'
-        //     });
-
-
-        // $scope.oldUsername = 'testing7';
-        // var get = sinon.stub($, 'GET');
-        // var expectedURL = '/api/new/testing8';
-        // var expectedParams = {
-        //     _id: 'testing8'
-        // };
-        //
-        // $scope.startGame();
-        // get.restore();
-        // sinon.assert.calledWith(get, expectedUrl, expectedParams);
-
-
-
-    // describe('spaceRender', function() {
-    //     it('should render the spaces', function() {
-    //         var $scope = {};
-    //         var controller = $controller('hangmanController', {$scope: $scope});
-    //         $scope.newUsername = 'testing2';
-    //         $scope.startGame();
-    //         console.log($scope.usernameTaken);
-    //
-    //
-    //     })
-    // })
 })
 
-
-// describe('hangmanController', function() {
-//     var $httpBackend, $rootScope, createController, authRequestHandler;
-//
-//     beforeEach(module('hangmanApp'));
-//
-//     beforeEach(inject(function($injector) {
-//         $httpBackend = $injector.get('$httpBackend');
-//
-//         authRequestHandler = $httpBackend.when('GET', '/api/old/testing')
-//             .respond({})
-//     }))
-// })
 
