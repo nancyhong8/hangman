@@ -15,8 +15,12 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
+
             'node_modules/angular/angular.js',
+            'node_modules/angular/angular-route.js',
             'node_modules/angular-mocks/angular-mocks.js',
+            'https://rawgit.com/dwmkerr/angular-modal-service/master/dst/angular-modal-service.js',
+            'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',
             'public/app.js',
             'public/testApp.js'
         ],

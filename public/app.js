@@ -33,6 +33,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
     $scope.oldUsername = oldUsername;
     $scope.startGame = startGame;
     var word;
+    $scope.word = word;
     $scope.instructionVisible = true;
     var spaces;
 
@@ -48,9 +49,10 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param game
      */
     function renderGame(game) {
+        $scope.game = game;
         console.log("reached renderGame");
         console.log("wronglettter length: " + game.wrongLetters.length);
-        word = game.word
+        $scope.word = game.word;
         $scope.loses = game.loses;
         $scope.wins = game.wins;
         $scope.wrongGuesses = game.wrongLetters.length;
@@ -100,6 +102,9 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
                 $scope.testing = 2;
                 alert(error);
             }
+            if(!$rootScope.$$phase) {
+                $rootScope.$apply();    //AngularJS 1.1.4 fix
+            }
         }
         // if username exists
         if ($scope.oldUsername != null) {
@@ -120,6 +125,10 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
 
             }),function(error) {
                 alert(error);
+            }
+
+            if(!$rootScope.$$phase) {
+                $rootScope.$apply();    //AngularJS 1.1.4 fix
             }
         }
     }
@@ -168,6 +177,9 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
             }
         }),function(error) {
             alert(error);
+        }
+        if(!$rootScope.$$phase) {
+            $rootScope.$apply();    //AngularJS 1.1.4 fix
         }
 
     }
