@@ -8,14 +8,7 @@ This hangman was built using MEAN stack :
 - [AngularJs](http://angularjs.org/)
 - [NodeJS](https://nodejs.org/en/)
 
-## Quick Start
 
-Install NodeJS from https://nodejs.org/en/
-
-Install MongoDB from http://www.mongodb.org/downloads
-
-Create and initialize nodeJS
-> npm init
 
 
 
