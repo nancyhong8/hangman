@@ -30,7 +30,7 @@
 
 
 
-<body ng-controller="hangmanController as model" ng-app="hangmanApp">
+<body ng-controller="hangmanController" ng-app="hangmanApp">
 
 <!-- Header -->
 <div class="sticky-header">
@@ -38,13 +38,13 @@
         <h2 class="white-color">
             <div class="right-side-glyphicon">
 
-                <a ng-click="model.startGame()">
+                <a ng-click="startGame()">
                     <span title="Restart" class="glyphicon glyphicon-repeat"></span>
                 </a>
 
 
             </div>
-            {{model.username}}'s Hangman
+            {{username}}'s Hangman
         </h2>
     </div>
 </div>
@@ -55,21 +55,21 @@
 
 <!-- INSTRUCTIONS -->
 <div>
-    <div id="instructions" draggables="" ng-show="model.instructionVisible">
+    <div id="instructions" draggables="" ng-show="instructionVisible">
         <h2>Welcome to Nancy's Hangman</h2>
         <ul>
             <li>Select letters by clicking the letter buttons</li>
             <li>You may guess up to ten incorrect letters</li>
             <li>Top right corner lets you restart</li>
-            <div ng-show="model.usernameTaken" class="alert alert-danger" role="alert">
-                {{model.usernameTakenMSG}}
+            <div ng-show="usernameTaken" class="alert alert-danger" role="alert">
+                {{usernameTakenMSG}}
             </div>
             Please enter a new username below to create game
-            <input ng-model="model.newUsername" type="text" class="form-control">
+            <input ng-model="newUsername" type="text" class="form-control">
             Please enter an existing username below to retrieve game
-            <input ng-model="model.oldUsername" type="text" class="form-control">
+            <input ng-model="oldUsername" type="text" class="form-control">
             <h3>Good luck!</h3>
-            <a ng-click="model.startGame()" class="btn btn-primary">Okay</a>
+            <a ng-click="startGame()" class="btn btn-primary">Okay</a>
         </ul>
     </div>
 
@@ -82,20 +82,20 @@
         <!-- alphabet -->
         <div class="container-fluid">
             <ul>
-                <li ng-class="{'active':$index == model.letterClickedIndex}" class="alphabet" ng-repeat="x in model.alphabet" ng-click="model.letterClicked($index, $event)">
+                <li ng-class="{'active':$index == letterClickedIndex}" class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index, $event)">
                     {{x}}
                 </li>
             </ul>
         </div>
 
         <!-- ERROR MESSAGE FOR ALREADY CHOSEN LETTTER -->
-        <div ng-show="model.alreadyGuessed" class="alert alert-danger" class='overlay' role="alert">
-            {{model.letterAlreadyGuessed}}
+        <div ng-show="alreadyGuessed" class="alert alert-danger" class='overlay' role="alert">
+            {{letterAlreadyGuessed}}
         </div>
 
         <!-- wording -->
         <div class="centered" class="container-fluid">
-                <div class="spaces" ng-repeat="y in model.space track by $index">{{y}}</div>
+                <div class="spaces" ng-repeat="y in space track by $index">{{y}}</div>
         </div>
 
     </div>
@@ -106,11 +106,11 @@
 <div class="col-xs-4">
 
     <div class="container-fluid">
-        Loses: {{model.loses}}
-        Wins: {{model.wins}}
+        Loses: {{loses}}
+        Wins: {{wins}}
         <div class="wrongGuesses" >
-            Wrong Guesses: {{model.wrongGuesses}} out of 10
-            <br/>Wrong Letters: {{model.wrongLetter}}
+            Wrong Guesses: {{wrongGuesses}} out of 10
+            <br/>Wrong Letters: {{wrongLetter}}
         </div>
 
         <div class="center">

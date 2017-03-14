@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
 
-var hangman = require("./public/hangman.service.js");
+var hangman = require("./public/service.js");
 hangman(app);
 
 var port = process.env.PORT || 4000;

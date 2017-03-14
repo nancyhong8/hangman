@@ -27,22 +27,21 @@ hangmanApp.directive('draggables', function dragInstructions() {
 // for hangman
 hangmanApp.controller('hangmanController', function hangmanController($scope, $http, ModalService) {
 
-    var vm = this;
     var newUsername;
-    vm.newUsername = newUsername;
+    $scope.newUsername = newUsername;
     var oldUsername;
-    vm.oldUsername = oldUsername;
-    vm.startGame = startGame;
-    var word;
-    vm.word = word;
-    vm.instructionVisible = true;
+    $scope.oldUsername = oldUsername;
+    $scope.startGame = startGame;
+    // var word;
+    // $scope.word = word;
+    $scope.instructionVisible = true;
     var spaces;
 
     var alphabet = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
         'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     ]
-    vm.alphabet = alphabet;
+    $scope.alphabet = alphabet;
 
 
     /**
@@ -50,18 +49,18 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param game
      */
     function renderGame(game) {
-        vm.game = game;
-        vm.word = game.word;
-        vm.loses = game.loses;
-        vm.wins = game.wins;
-        vm.wrongGuesses = game.wrongLetters.length;
-        vm.wrongLetter = game.wrongLetters.toString();
+        $scope.game = game;
+        // $scope.word = game.word;
+        $scope.loses = game.loses;
+        $scope.wins = game.wins;
+        $scope.wrongGuesses = game.wrongLetters.length;
+        $scope.wrongLetter = game.wrongLetters.toString();
         if(game.wrongLetters.length > 0 && game.wrongLetters.length < 11) {
 
             drawArray[game.wrongLetters.length]();
         }
         spaceRender(game.spaces);
-        vm.username = game._id;
+        $scope.username = game._id;
     }
 
     /**
@@ -73,7 +72,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
         for(i = 0; i < spaces; i ++) {
             spaces.push[i];
         }
-        vm.space = spaces;
+        $scope.space = spaces;
     }
 
     /**
@@ -84,42 +83,42 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      */
     function startGame() {
         // If its a new username
-        if (vm.newUsername != null) {
-            vm.testing = 1;
+        if ($scope.newUsername != null) {
+            $scope.testing = 1;
             $http({
                 method: 'GET',
-                url: '/api/new/' + vm.newUsername
+                url: '/api/new/' + $scope.newUsername
             }).then(function(game) {
                 // if the username is already taken
                 if (game.data == "usernameTaken") {
-                    vm.usernameTaken = true;
-                    vm.usernameTakenMSG = "This username is taken";
+                    $scope.usernameTaken = true;
+                    $scope.usernameTakenMSG = "This username is taken";
                 } else {
                     // if username was created successfully,
                     // pass the game to render
-                    vm.instructionVisible = false;
+                    $scope.instructionVisible = false;
                     renderGame(game.data);
                 }
 
             }),function(error) {
-                vm.testing = 2;
+                $scope.testing = 2;
                 alert(error);
             }
 
         }
         // if username exists
-        if (vm.oldUsername != null) {
+        if ($scope.oldUsername != null) {
             $http({
                 method: 'GET',
-                url: '/api/old/' + vm.oldUsername
+                url: '/api/old/' + $scope.oldUsername
             }).then(function(game) {
                 // if username cant be found
                 if (game.data == "noUsername") {
-                    vm.usernameTaken = true;
-                    vm.usernameTakenMSG = "This username does not exist";
+                    $scope.usernameTaken = true;
+                    $scope.usernameTakenMSG = "This username does not exist";
                 } else {
                     // if username was found, send retrieved game to render
-                    vm.instructionVisible = false;
+                    $scope.instructionVisible = false;
                     renderGame(game.data);
                 }
 
@@ -139,21 +138,20 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param index of the alphabet clicked
      * @param event
      */
-    vm.letterClicked = function (index, event) {
-        vm.alreadyGuessed = false;
-        vm.letterClickedIndex = index;
+    $scope.letterClicked = function (index, event) {
+        $scope.alreadyGuessed = false;
+        $scope.letterClickedIndex = index;
 
-        var letter = alphabet[index];
         $http({
             method: 'GET',
-            url: '/api/letterClicked/' + letter
+            url: '/api/letterClicked/' + $scope.username + "/" + alphabet[index]
         }).then(function(game) {
             // If the database sends back that
             // the letter has already been clicked,
             // render the error msg in the html
             if(game.data == "alreadyGuessed") {
-                vm.alreadyGuessed = true;
-                vm.letterAlreadyGuessed = "This letter has already been guessed";
+                $scope.alreadyGuessed = true;
+                $scope.letterAlreadyGuessed = "This letter has already been guessed";
                 return;
             }
             renderGame(game.data);
@@ -164,15 +162,14 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
                 startGame();
             }
             // check if game is lost
-            if(!game.data.word.includes(letter)) {
-                if (game.data.wrongLetters.length == 10) {
-                    openLost();
-                    empty();
-                    startGame();
-
-                }
+            if (game.data.wrongLetters.length == 10) {
+                openLost();
+                empty();
+                startGame();
 
             }
+
+            // }
         }),function(error) {
             alert(error);
         }

@@ -2,7 +2,7 @@
 
 module.exports = function (app) {
     // HTTP call map
-    app.get("/api/letterClicked/:letter", letterClicked);
+    app.get("/api/letterClicked/:username/:letter", letterClicked);
     app.get("/api/new/:username", makeUsername);
     app.get("/api/old/:username", retrieveUsername);
 
@@ -12,6 +12,7 @@ module.exports = function (app) {
      */
     var mongoose = require('mongoose');
     mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
+    // mongoose.connect('mongodb://localhost/HangmanDB');
     var gameSchema = new mongoose.Schema(
         {   _id: {type: String, required: true},
             word: {type: String, required: true},
@@ -25,8 +26,8 @@ module.exports = function (app) {
     var GameModel = mongoose.model('Game', gameSchema);
 
 
-    var word;
-    var game;
+    // var word;
+    // var game;
 
     /**
      * Uses an existing username key to retrieve game
@@ -44,7 +45,6 @@ module.exports = function (app) {
             // Send back the game to the controller
             if (oldGame) {
                 selectWord(function(wordSelected) {
-                    word = wordSelected;
                     oldGame.word = wordSelected;
                     oldGame.spaces = [];
                     oldGame.wrongLetters = [];
@@ -56,7 +56,6 @@ module.exports = function (app) {
                         if (err)
                             return console.error(err);
                     });
-                    game = oldGame;
                     res.send(oldGame);
                 })
 
@@ -86,7 +85,6 @@ module.exports = function (app) {
                 res.send("usernameTaken");
             } else {
                 selectWord(function(wordSelected) {
-                    var word = wordSelected;
 
                     // create the player object in the database
                     // and send the word back
@@ -103,12 +101,12 @@ module.exports = function (app) {
                         newGame.spaces.push("_");
                     }
 
-                    game = newGame;
                     res.send(newGame);
                 })
             }
         })
     }
+
 
 
     /**
@@ -117,39 +115,53 @@ module.exports = function (app) {
      * @param res sends back the altered game
      */
     function letterClicked(req, res) {
+        var username = req.params['username'];
         var letter = req.params['letter'];
+        var game;
 
-        // check if the letter has been guessed,
-        // if so, send the message to the controller to render
-        if(game.guessedLetters.includes(letter)) {
-            res.send("alreadyGuessed");
-            return;
-        }
+        // use the current username to retrieve game
+        GameModel.findOne({_id: username}, function(err, oldGame) {
+            if (oldGame) {
+                game = oldGame;
+                // check if the letter has been guessed,
+                // if so, send the message to the controller to render
+                if(game.guessedLetters.includes(letter)) {
+                    res.send("alreadyGuessed");
+                    return;
+                }
 
-        game.guessedLetters.push(letter);
-        for(var i = 0; i < word.length; i++) {
-            if(word[i] == letter) {
-                game.spaces[i] = letter;
+                game.guessedLetters.push(letter);
+                for(var i = 0; i < game.word.length; i++) {
+                    if(game.word[i] == letter) {
+                        game.spaces[i] = letter;
+                    }
+                }
+
+                if(!game.spaces.includes("_")) {
+                    game.wins = game.wins + 1;
+                }
+                if(!game.word.includes(letter)) {
+                    game.wrongLetters.push(letter);
+
+                    if (game.wrongLetters.length == 10) {
+                        game.loses = game.loses + 1;
+                    }
+
+                }
+                game.save(function (err, user) {
+                    if (err)
+                        return console.error(err);
+                });
+
+                res.send(game);
             }
-        }
-
-        if(!game.spaces.includes("_")) {
-            game.wins = game.wins + 1;
-        }
-        if(!word.includes(letter)) {
-            game.wrongLetters.push(letter);
-
-            if (game.wrongLetters.length == 10) {
-                game.loses = game.loses + 1;
+            else {
+                console.log("error username clicking letter!");
             }
+        })
 
-        }
-        game.save(function (err, user) {
-            if (err)
-                return console.error(err);
-        });
 
-        res.send(game);
+
     }
 
     /**
@@ -161,11 +173,12 @@ module.exports = function (app) {
      */
     function selectWord(callback) {
         var words = [];
+        var word;
 
         fs = require('fs');
         fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
             if(err) {
-                console.log("couldnt open word file: " + err);
+                console.log("couldn't open word file: " + err);
             }
             else {
                 var lines = data.split('\n');
