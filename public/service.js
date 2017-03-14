@@ -25,10 +25,6 @@ module.exports = function (app) {
     )
     var GameModel = mongoose.model('Game', gameSchema);
 
-
-    // var word;
-    // var game;
-
     /**
      * Uses an existing username key to retrieve game
      * from the database
@@ -74,7 +70,6 @@ module.exports = function (app) {
      *        message that the username is already taken
      */
     function makeUsername(req, res) {
-
         var username = req.params['username'];
 
         GameModel.count({_id: username}, function (err, count) {
@@ -115,12 +110,11 @@ module.exports = function (app) {
     function letterClicked(req, res) {
         var username = req.params['username'];
         var letter = req.params['letter'];
-        var game;
 
         // use the current username to retrieve game
         GameModel.findOne({_id: username}, function(err, oldGame) {
             if (oldGame) {
-                game = oldGame;
+                var game = oldGame;
                 // check if the letter has been guessed,
                 // if so, send the message to the controller to render
                 if(game.guessedLetters.includes(letter)) {
@@ -150,7 +144,7 @@ module.exports = function (app) {
 
                 game.save(function (err, user) {
                     if (err)
-                        return console.error(err);
+                        return console.log(err);
                 });
 
                 res.send(game);
