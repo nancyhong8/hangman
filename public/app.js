@@ -61,6 +61,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
             drawArray[game.wrongLetters.length]();
         }
         spaceRender(game.spaces);
+        vm.username = game._id;
     }
 
     /**
