@@ -38,7 +38,6 @@ module.exports = function (app) {
      */
     function retrieveUsername(req, res) {
         var username = req.params['username'];
-        var words = [];
 
         // Try to find the game using the username given
         GameModel.findOne({_id: username}, function(err, oldGame) {
@@ -77,7 +76,6 @@ module.exports = function (app) {
     function makeUsername(req, res) {
 
         var username = req.params['username'];
-        var words = [];
 
         GameModel.count({_id: username}, function (err, count) {
             // Checks if username already exists
@@ -93,13 +91,13 @@ module.exports = function (app) {
                             word: wordSelected,
                         }
                     )
+                    for(i = 0; i < wordSelected.length; i++) {
+                        newGame.spaces.push("_");
+                    }
                     newGame.save(function (err, user) {
                         if (err)
                             return console.error(err);
                     });
-                    for(i = 0; i < wordSelected.length; i++) {
-                        newGame.spaces.push("_");
-                    }
 
                     res.send(newGame);
                 })
@@ -131,23 +129,25 @@ module.exports = function (app) {
                 }
 
                 game.guessedLetters.push(letter);
+                // sets the spaces if the letter is in word
                 for(var i = 0; i < game.word.length; i++) {
                     if(game.word[i] == letter) {
                         game.spaces[i] = letter;
                     }
                 }
 
+                // if won
                 if(!game.spaces.includes("_")) {
                     game.wins = game.wins + 1;
                 }
+                // if lost
                 if(!game.word.includes(letter)) {
                     game.wrongLetters.push(letter);
-
                     if (game.wrongLetters.length == 10) {
                         game.loses = game.loses + 1;
                     }
-
                 }
+
                 game.save(function (err, user) {
                     if (err)
                         return console.error(err);
