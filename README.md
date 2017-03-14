@@ -14,6 +14,7 @@ This hangman was built using MEAN stack :
 - hangman.service.js: holds the http request methods
 - testApp.js: test
 
+Testing was done using Karma + Jasmine
 
-THis app is hosted on heroku:
+This app is hosted on heroku:
 https://hangman-shoobx.herokuapp.com/
