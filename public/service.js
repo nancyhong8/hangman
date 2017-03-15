@@ -162,6 +162,8 @@ module.exports = function (app) {
             else {
                 console.log("error username clicking letter!");
             }
+
+            // Updating the spaces array
             GameModel.update({_id: username}, {$set: { spaces: spaces}}, function() {
             });
         })
