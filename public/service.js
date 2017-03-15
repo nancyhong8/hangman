@@ -11,8 +11,8 @@ module.exports = function (app) {
      *   creating a model for a game
      */
     var mongoose = require('mongoose');
-    mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
-    // mongoose.connect('mongodb://localhost/HangmanDB');
+    // mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
+    mongoose.connect('mongodb://localhost/HangmanDB');
     var gameSchema = new mongoose.Schema(
         {   _id: {type: String, required: true},
             word: {type: String, required: true},
@@ -20,7 +20,7 @@ module.exports = function (app) {
             loses: {type: Number, default: 0},
             guessedLetters: {type: [String], default: []},
             wrongLetters: {type: [String], default: []},
-            spaces: [String]
+            spaces: {type: [String], default: []}
         }
     )
     var GameModel = mongoose.model('Game', gameSchema);
@@ -33,6 +33,7 @@ module.exports = function (app) {
      *         or a message that the user doesn't exist
      */
     function retrieveUsername(req, res) {
+        console.log("reached retrieveUsername");
         var username = req.params['username'];
 
         // Try to find the game using the username given
@@ -51,6 +52,7 @@ module.exports = function (app) {
                         if (err)
                             return console.error(err);
                     });
+                    console.log(oldGame);
                     res.send(oldGame);
                 })
 
@@ -70,6 +72,8 @@ module.exports = function (app) {
      *        message that the username is already taken
      */
     function makeUsername(req, res) {
+        console.log("reached makeUsername");
+
         var username = req.params['username'];
 
         GameModel.count({_id: username}, function (err, count) {
@@ -110,11 +114,12 @@ module.exports = function (app) {
     function letterClicked(req, res) {
         var username = req.params['username'];
         var letter = req.params['letter'];
+        var spaces;
 
         // use the current username to retrieve game
-        GameModel.findOne({_id: username}, function(err, oldGame) {
-            if (oldGame) {
-                var game = oldGame;
+        GameModel.findOne({_id: username}, function(err, game) {
+            if (game) {
+                // var game = oldGame;
                 // check if the letter has been guessed,
                 // if so, send the message to the controller to render
                 if(game.guessedLetters.includes(letter)) {
@@ -123,10 +128,12 @@ module.exports = function (app) {
                 }
 
                 game.guessedLetters.push(letter);
+
+                spaces = game.spaces;
                 // sets the spaces if the letter is in word
                 for(var i = 0; i < game.word.length; i++) {
                     if(game.word[i] == letter) {
-                        game.spaces[i] = letter;
+                        spaces[i] = letter;
                     }
                 }
 
@@ -142,9 +149,12 @@ module.exports = function (app) {
                     }
                 }
 
-                game.save(function (err, user) {
+                game.save(function (err, game) {
                     if (err)
                         return console.log(err);
+                    else {
+                    }
+
                 });
 
                 res.send(game);
@@ -152,6 +162,8 @@ module.exports = function (app) {
             else {
                 console.log("error username clicking letter!");
             }
+            GameModel.update({_id: username}, {$set: { spaces: spaces}}, function() {
+            });
         })
 
 

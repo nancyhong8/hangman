@@ -70,7 +70,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      */
     function spaceRender(spaces) {
         for(i = 0; i < spaces; i ++) {
-            spaces.push[i];
+            //spaces.push[i];
         }
         $scope.space = spaces;
     }
