@@ -49,8 +49,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
      * @param game
      */
     function renderGame(game) {
-        $scope.game = game;
-        // $scope.word = game.word;
+
         $scope.loses = game.loses;
         $scope.wins = game.wins;
         $scope.wrongGuesses = game.wrongLetters.length;
@@ -60,7 +59,7 @@ hangmanApp.controller('hangmanController', function hangmanController($scope, $h
             drawArray[game.wrongLetters.length]();
         }
         spaceRender(game.spaces);
-        $scope.username = game._id;
+        $scope.username = game.username;
     }
 
     /**

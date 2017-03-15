@@ -26,6 +26,21 @@ module.exports = function (app) {
     var GameModel = mongoose.model('Game', gameSchema);
 
     /**
+     * makes a simulation of the game, containing
+     * only what is necessary to be passed to the controoler
+     * @param game the actual game
+     */
+    function fakeGame(game) {
+        return {
+            'username': game._id,
+            'loses': game.loses,
+            'wins': game.wins,
+            'wrongLetters': game.wrongLetters,
+            'spaces': game.spaces
+        };
+    }
+
+    /**
      * Uses an existing username key to retrieve game
      * from the database
      * @param req contains the username
@@ -33,7 +48,6 @@ module.exports = function (app) {
      *         or a message that the user doesn't exist
      */
     function retrieveUsername(req, res) {
-        console.log("reached retrieveUsername");
         var username = req.params['username'];
 
         // Try to find the game using the username given
@@ -52,8 +66,8 @@ module.exports = function (app) {
                         if (err)
                             return console.error(err);
                     });
-                    console.log(oldGame);
-                    res.send(oldGame);
+                    var sendGame = fakeGame(oldGame);
+                    res.send(sendGame);
                 })
 
             }
@@ -72,8 +86,6 @@ module.exports = function (app) {
      *        message that the username is already taken
      */
     function makeUsername(req, res) {
-        console.log("reached makeUsername");
-
         var username = req.params['username'];
 
         GameModel.count({_id: username}, function (err, count) {
@@ -97,8 +109,8 @@ module.exports = function (app) {
                         if (err)
                             return console.error(err);
                     });
-
-                    res.send(newGame);
+                    var sendGame = fakeGame(newGame);
+                    res.send(sendGame);
                 })
             }
         })
@@ -156,8 +168,8 @@ module.exports = function (app) {
                     }
 
                 });
-
-                res.send(game);
+                var sendGame = fakeGame(game);
+                res.send(sendGame);
             }
             else {
                 console.log("error username clicking letter!");
