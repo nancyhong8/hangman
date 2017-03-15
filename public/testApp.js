@@ -14,8 +14,7 @@ describe('testing controller', function() {
         httpBackend
             .when('GET', '/api/new/testing10')
             .respond(200, {
-                _id: 'testing10',
-                word: 'hangman',
+                username: 'testing10',
                 wins: 0,
                 loses: 0,
                 guessedLetters: [],
@@ -26,8 +25,7 @@ describe('testing controller', function() {
         httpBackend
             .when('GET', '/api/old/testing')
             .respond(200, {
-                _id: 'testing',
-                word: 'hangman',
+                username: 'testing',
                 wins: 4,
                 loses: 5,
                 guessedLetters: [],
@@ -36,10 +34,9 @@ describe('testing controller', function() {
             });
 
         httpBackend
-            .when('GET', '/api/letterClicked/m')
+            .when('GET', '/api/letterClicked/testing/m')
             .respond(200, {
-                _id: 'testing',
-                word: 'hangman',
+                username: 'testing',
                 wins: 0,
                 loses: 0,
                 guessedLetters: ['m'],
@@ -63,7 +60,6 @@ describe('testing controller', function() {
         scope.startGame();
         httpBackend.flush();
         expect(scope.instructionVisible).toBe(false);
-        expect(scope.word).toEqual('hangman');
         expect(scope.wins).toEqual(4);
         expect(scope.loses).toEqual(5);
         expect(scope.wrongGuesses).toEqual(0);
@@ -76,7 +72,6 @@ describe('testing controller', function() {
         scope.startGame();
         httpBackend.flush();
         expect(scope.instructionVisible).toBe(false);
-        expect(scope.word).toEqual('hangman');
         expect(scope.wins).toEqual(0);
         expect(scope.loses).toEqual(0);
         expect(scope.wrongGuesses).toEqual(0);
@@ -85,11 +80,9 @@ describe('testing controller', function() {
 
     it("should successfully return a game changed when a letter is clicked", function() {
         ctrl = controller('hangmanController', {$scope: scope});
-        scope.oldUsername = 'testing';
-        scope.newUsername = null;
+        scope.username = 'testing';
         scope.letterClicked(12);
         httpBackend.flush();
-        expect(scope.word).toEqual('hangman');
         expect(scope.wins).toEqual(0);
         expect(scope.loses).toEqual(0);
         expect(scope.wrongGuesses).toEqual(0);
