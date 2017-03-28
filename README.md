@@ -17,4 +17,4 @@ This hangman was built using MEAN stack :
 Testing was done using Karma + Jasmine
 
 This app is hosted on heroku:
-https://hangman-shoobx.herokuapp.com/
+https://nancy-hangman.herokuapp.com/
