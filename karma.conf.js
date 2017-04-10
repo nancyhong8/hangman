@@ -17,12 +17,17 @@ module.exports = function(config) {
         files: [
 
             'node_modules/angular/angular.js',
-            'node_modules/angular/angular-route.js',
             'node_modules/angular-mocks/angular-mocks.js',
-            'https://rawgit.com/dwmkerr/angular-modal-service/master/dst/angular-modal-service.js',
+            'public/js/angular-route.js',
+            'https://rawgit.com/dwmkerr/angular-modal-service/master/dst/angular-modal-server.mongo.js',
             'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',
             'public/app.js',
-            'public/testApp.js'
+            'public/app/hangman.controller.js',
+            'public/app/config.js',
+            'public/app/modal.controller.js',
+            'public/app/draggable.directive.js',
+            'public/app/welcome.controller.js',
+            'public/test.js'
         ],
 
 

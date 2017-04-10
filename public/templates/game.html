@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<!-- Header -->
+<div class="sticky-header">
+    <div class="container-fluid">
+        <h2 class="white-color">
+            <div class="right-side-glyphicon">
+
+                <a ng-click="startGame()">
+                    <span title="Restart" class="glyphicon glyphicon-repeat"></span>
+                </a>
+
+
+            </div>
+            {{username}}'s Hangman
+        </h2>
+    </div>
+</div>
+<!-- HEADER END -->
+
+<!-- LEFT SIDE WHERE THE LETTER HANDLING IS RENDERED-->
+<div class="container-fluid">
+
+<div class="col-xs-8">
+    <div>
+        <!-- alphabet -->
+        <div class="container-fluid">
+            <ul>
+                <li ng-class="{'active':$index == letterClickedIndex}" class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index, $event)">
+                    {{x}}
+                </li>
+            </ul>
+        </div>
+
+        <!-- ERROR MESSAGE FOR ALREADY CHOSEN LETTTER -->
+        <div ng-show="alreadyGuessed" class="alert alert-danger" class='overlay' role="alert">
+            {{letterAlreadyGuessed}}
+        </div>
+
+        <!-- wording -->
+        <div class="centered" class="container-fluid">
+            <div class="spaces" ng-repeat="y in space track by $index">{{y}}</div>
+        </div>
+
+    </div>
+</div>
+<!-- LEFT SIDE ENDING -->
+
+<!-- HANGING MAN AND SCORE -->
+<div class="col-xs-4">
+
+    <div class="container-fluid">
+        Loses: {{loses}}
+        Wins: {{wins}}
+        <div class="wrongGuesses" >
+            Wrong Guesses: {{wrongGuesses}} out of 10
+            <br/>Wrong Letters: {{wrongLetter}}
+        </div>
+
+        <div class="center">
+            <canvas id="myCanvas" width="200" height="180" style="border:1px solid #d3d3d3;">
+            </canvas>
+        </div>
+
+    </div>
+</div>
+<!-- HANGING MAN END -->
+
+</div>
+</div>
+
+
+<!-- FOOTER -->
+<div class="sticky-footer">
+    <div class="container-fluid">
+        <h2>
+            <div>
+
+            </div>
+        </h2>
+    </div>
+</div>
+<!-- FOOTER END -->
+
+</html>

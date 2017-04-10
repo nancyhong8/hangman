@@ -15,10 +15,15 @@
     <script src="https://rawgit.com/dwmkerr/angular-modal-service/master/dst/angular-modal-service.js"></script>
 
     <script src="app.js"></script>
+    <script src="app/hangman.controller.js"></script>
+    <script src="app/modal.controller.js"></script>
+    <script src="app/draggable.directive.js"></script>
+    <script src="app/config.js"></script>
+    <script src="app/welcome.controller.js"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+    <script src="test.js"></script>
+    <script src="../node_modules/angular-mocks/angular-mocks.js"></script>
+
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
 
     <meta charset="UTF-8">
@@ -29,114 +34,9 @@
 
 
 
+<body>
 
-<body ng-controller="hangmanController" ng-app="hangmanApp">
-
-<!-- Header -->
-<div class="sticky-header">
-    <div class="container-fluid">
-        <h2 class="white-color">
-            <div class="right-side-glyphicon">
-
-                <a ng-click="startGame()">
-                    <span title="Restart" class="glyphicon glyphicon-repeat"></span>
-                </a>
-
-
-            </div>
-            {{username}}'s Hangman
-        </h2>
-    </div>
-</div>
-<!-- HEADER END -->
-
-
-
-
-<!-- INSTRUCTIONS -->
-<div>
-    <div id="instructions" draggables="" ng-show="instructionVisible">
-        <h2>Welcome to Nancy's Hangman</h2>
-        <ul>
-            <li>Select letters by clicking the letter buttons</li>
-            <li>You may guess up to ten incorrect letters</li>
-            <li>Top right corner lets you restart</li>
-            <div ng-show="usernameTaken" class="alert alert-danger" role="alert">
-                {{usernameTakenMSG}}
-            </div>
-            Please enter a new username below to create game
-            <input ng-model="newUsername" type="text" class="form-control">
-            Please enter an existing username below to retrieve game
-            <input ng-model="oldUsername" type="text" class="form-control">
-            <h3>Good luck!</h3>
-            <a ng-click="startGame()" class="btn btn-primary">Okay</a>
-        </ul>
-    </div>
-
-
-<div class="container-fluid">
-
-<!-- LEFT SIDE WHERE THE LETTER HANDLING IS RENDERED-->
-<div class="col-xs-8">
-    <div>
-        <!-- alphabet -->
-        <div class="container-fluid">
-            <ul>
-                <li ng-class="{'active':$index == letterClickedIndex}" class="alphabet" ng-repeat="x in alphabet" ng-click="letterClicked($index, $event)">
-                    {{x}}
-                </li>
-            </ul>
-        </div>
-
-        <!-- ERROR MESSAGE FOR ALREADY CHOSEN LETTTER -->
-        <div ng-show="alreadyGuessed" class="alert alert-danger" class='overlay' role="alert">
-            {{letterAlreadyGuessed}}
-        </div>
-
-        <!-- wording -->
-        <div class="centered" class="container-fluid">
-                <div class="spaces" ng-repeat="y in space track by $index">{{y}}</div>
-        </div>
-
-    </div>
-</div>
-<!-- LEFT SIDE ENDING -->
-
-<!-- HANGING MAN AND SCORE -->
-<div class="col-xs-4">
-
-    <div class="container-fluid">
-        Loses: {{loses}}
-        Wins: {{wins}}
-        <div class="wrongGuesses" >
-            Wrong Guesses: {{wrongGuesses}} out of 10
-            <br/>Wrong Letters: {{wrongLetter}}
-        </div>
-
-        <div class="center">
-            <canvas id="myCanvas" width="200" height="180" style="border:1px solid #d3d3d3;">
-            </canvas>
-        </div>
-
-    </div>
-</div>
-<!-- HANGING MAN END -->
-
-</div>
-</div>
-
-
-<!-- FOOTER -->
-<div class="sticky-footer">
-    <div class="container-fluid">
-        <h2>
-            <div>
-
-            </div>
-        </h2>
-    </div>
-</div>
-<!-- FOOTER END -->
+<div ng-view></div>
 
 </body>
 </html>

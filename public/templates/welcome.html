@@ -1,0 +1,20 @@
+<!-- INSTRUCTIONS -->
+<div>
+    <div id="instructions" draggables="">
+        <h2>Welcome to Nancy's Hangman</h2>
+        <ul>
+            <li>Select letters by clicking the letter buttons</li>
+            <li>You may guess up to ten incorrect letters</li>
+            <li>Top right corner lets you restart</li>
+            <div ng-show="usernameTaken" class="alert alert-danger" role="alert">
+                {{usernameTakenMSG}}
+            </div>
+            Please enter a new username below to create game
+            <input ng-model="newUsername" type="text" class="form-control">
+            Please enter an existing username below to retrieve game
+            <input ng-model="oldUsername" type="text" class="form-control">
+            <h3>Good luck!</h3>
+            <a ng-click="startGame()" class="btn btn-primary">Okay</a>
+        </ul>
+    </div>
+</div>

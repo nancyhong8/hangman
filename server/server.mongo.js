@@ -2,9 +2,10 @@
 
 module.exports = function (app) {
     // HTTP call map
-    app.get("/api/letterClicked/:username/:letter", letterClicked);
-    app.get("/api/new/:username", makeUsername);
+    app.put("/api/letterClicked/:username/:letter", letterClicked);
+    app.post("/api/:username", makeUsername);
     app.get("/api/old/:username", retrieveUsername);
+    app.get("/api/word/:username", getWord)
 
     /**
      *   Setting up the database (using mLab)
@@ -12,7 +13,7 @@ module.exports = function (app) {
      */
     var mongoose = require('mongoose');
     mongoose.connect('mongodb://nancyh:Rewolf123@ds117899.mlab.com:17899/heroku_xn9ljwr0');
-    // mongoose.connect('mongodb://localhost/HangmanDB');
+    //mongoose.connect('mongodb://localhost/HangmanDB');
     var gameSchema = new mongoose.Schema(
         {   _id: {type: String, required: true},
             word: {type: String, required: true},
@@ -27,7 +28,7 @@ module.exports = function (app) {
 
     /**
      * makes a simulation of the game, containing
-     * only what is necessary to be passed to the controoler
+     * only what is necessary to be passed to the controller
      * @param game the actual game
      */
     function fakeGame(game) {
@@ -45,35 +46,39 @@ module.exports = function (app) {
      * from the database
      * @param req contains the username
      * @param res sends back the retrieved game for the username
-     *         or a message that the user doesn't exist
+     *         or an error if the user doesn't exist
      */
     function retrieveUsername(req, res) {
         var username = req.params['username'];
 
         // Try to find the game using the username given
-        GameModel.findOne({_id: username}, function(err, oldGame) {
-            // Send back the game to the controller
-            if (oldGame) {
+        GameModel.findOne({_id: username}, function(err, game) {
+            // if username found, Send back the game to the controller
+            if (game) {
+                // select a word from the word.txt file
+                // and reset the game fields and save it
                 selectWord(function(wordSelected) {
-                    oldGame.word = wordSelected;
-                    oldGame.spaces = [];
-                    oldGame.wrongLetters = [];
-                    oldGame.guessedLetters = [];
+                    game.word = wordSelected;
+                    game.spaces = [];
+                    game.wrongLetters = [];
+                    game.guessedLetters = [];
                     for(i = 0; i < wordSelected.length; i++) {
-                        oldGame.spaces.push("_");
+                        game.spaces.push("_");
                     }
-                    oldGame.save(function (err, user) {
+                    game.save(function (err, user) {
                         if (err)
                             return console.error(err);
                     });
-                    var sendGame = fakeGame(oldGame);
+                    // create a simulated game containing
+                    // only necessary fields to send back
+                    var sendGame = fakeGame(game);
                     res.send(sendGame);
                 })
 
             }
             // If the username doesnt exist
             else {
-                res.send("noUsername");
+                res.sendStatus(500);
             }
         })
     }
@@ -91,25 +96,26 @@ module.exports = function (app) {
         GameModel.count({_id: username}, function (err, count) {
             // Checks if username already exists
             if (count > 0) {
-                res.send("usernameTaken");
+                res.sendStatus(500);
             } else {
+                // select word from word.txt file
                 selectWord(function(wordSelected) {
 
                     // create the player object in the database
                     // and send the word back
-                    var newGame = new GameModel(
+                    var game = new GameModel(
                         {   _id: username,
                             word: wordSelected,
                         }
                     )
                     for(i = 0; i < wordSelected.length; i++) {
-                        newGame.spaces.push("_");
+                        game.spaces.push("_");
                     }
-                    newGame.save(function (err, user) {
+                    game.save(function (err, user) {
                         if (err)
                             return console.error(err);
                     });
-                    var sendGame = fakeGame(newGame);
+                    var sendGame = fakeGame(game);
                     res.send(sendGame);
                 })
             }
@@ -131,11 +137,10 @@ module.exports = function (app) {
         // use the current username to retrieve game
         GameModel.findOne({_id: username}, function(err, game) {
             if (game) {
-                // var game = oldGame;
                 // check if the letter has been guessed,
-                // if so, send the message to the controller to render
+                // if so, send error msg to the controller to render
                 if(game.guessedLetters.includes(letter)) {
-                    res.send("alreadyGuessed");
+                    res.sendStatus(500);
                     return;
                 }
 
@@ -176,11 +181,25 @@ module.exports = function (app) {
             }
 
             // Updating the spaces array
+            // have to explicitly tell mongoose array is changed otherwise it won't
+            // consider changes
             GameModel.update({_id: username}, {$set: { spaces: spaces}}, function() {
             });
         })
 
+    }
 
+    /**
+     * finds the username's word of the game
+     * to render when game is lsot
+     */
+    function getWord(req, res) {
+        var username = req.params['username'];
+        GameModel.findOne({_id: username}, function(err, game) {
+            if(game) {
+                res.send(game.word);
+            }
+        })
 
     }
 
@@ -196,7 +215,7 @@ module.exports = function (app) {
         var word;
 
         fs = require('fs');
-        fs.readFile(__dirname + '/words.txt', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/../public/words.txt', 'utf8', function(err, data) {
             if(err) {
                 console.log("couldn't open word file: " + err);
             }
@@ -216,5 +235,7 @@ module.exports = function (app) {
             }
         })
     }
+
+
 
 }

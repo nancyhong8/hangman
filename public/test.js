@@ -6,13 +6,13 @@ describe('testing controller', function() {
     var scope, controller, httpBackend;
 
     beforeEach(module('hangmanApp'));
-    beforeEach(inject(function ($rootScope, $controller, $httpBackend) {
+    beforeEach(inject(function ($rootScope, $controller, $httpBackend, $location) {
         scope = $rootScope.$new();
         controller = $controller;
         httpBackend = $httpBackend;
 
         httpBackend
-            .when('GET', '/api/new/testing10')
+            .when('POST', '/api/testing10')
             .respond(200, {
                 username: 'testing10',
                 wins: 0,
@@ -23,7 +23,7 @@ describe('testing controller', function() {
             });
 
         httpBackend
-            .when('GET', '/api/old/testing')
+            .when('GET', '/api/old/testing10')
             .respond(200, {
                 username: 'testing',
                 wins: 4,
@@ -34,7 +34,7 @@ describe('testing controller', function() {
             });
 
         httpBackend
-            .when('GET', '/api/letterClicked/testing/m')
+            .when('PUT', '/api/letterClicked/testing/m')
             .respond(200, {
                 username: 'testing',
                 wins: 0,
@@ -43,6 +43,10 @@ describe('testing controller', function() {
                 wrongLetters: [],
                 spaces: ['_']
             });
+
+        httpBackend
+            .when('GET', '/api/word/testing')
+            .respond(200, 'hangman');
 
     }))
 
@@ -55,31 +59,28 @@ describe('testing controller', function() {
 
 
     it("should successfully return a game using an old username", function() {
-        ctrl = controller('hangmanController', {$scope: scope});
-        scope.oldUsername = 'testing';
+        ctrl = controller('hangmanController', {
+            $scope: scope,
+            $routeParams: {username: 'testing10'}
+        });
         scope.startGame();
         httpBackend.flush();
-        expect(scope.instructionVisible).toBe(false);
         expect(scope.wins).toEqual(4);
         expect(scope.loses).toEqual(5);
         expect(scope.wrongGuesses).toEqual(0);
     })
 
     it("should successfully return a game using a new username", function() {
-        ctrl = controller('hangmanController', {$scope: scope});
+        ctrl = controller('welcomeController', {$scope: scope});
         scope.newUsername = 'testing10';
-        scope.oldUsername = null;
         scope.startGame();
         httpBackend.flush();
-        expect(scope.instructionVisible).toBe(false);
-        expect(scope.wins).toEqual(0);
-        expect(scope.loses).toEqual(0);
-        expect(scope.wrongGuesses).toEqual(0);
-
     })
 
     it("should successfully return a game changed when a letter is clicked", function() {
-        ctrl = controller('hangmanController', {$scope: scope});
+        ctrl = controller('hangmanController', {
+            $scope: scope
+        });
         scope.username = 'testing';
         scope.letterClicked(12);
         httpBackend.flush();
@@ -87,8 +88,4 @@ describe('testing controller', function() {
         expect(scope.loses).toEqual(0);
         expect(scope.wrongGuesses).toEqual(0);
     })
-
-
 })
-
-
